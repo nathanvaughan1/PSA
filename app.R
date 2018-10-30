@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(shinyjs)
 library(plotrix)
 
 ui <- fluidPage(
@@ -48,7 +49,7 @@ ui <- fluidPage(
              fluidRow(
                column(2,strong("Attribute description")),
                column(2,strong("")),
-               column(2,strong("Attribute score")),
+               column(2,strong("Score weights")),
                column(2,strong("")),
                column(2,strong("Attribute weight")),
                column(2,strong("Comments"))
@@ -71,10 +72,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA13","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA12","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA11","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA14","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA13","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA12","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA11","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA14","",min=0,value=1)),
                column(2,textInput("ProbPA15",label=""))
              ),
              fluidRow(
@@ -87,10 +88,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA23","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA22","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA21","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA24","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA23","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA22","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA21","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA24","",min=0,value=1)),
                column(2,textInput("ProbPA25",label=""))
              ),
              fluidRow(
@@ -103,10 +104,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA33","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA32","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA31","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA34","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA33","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA32","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA31","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA34","",min=0,value=1)),
                column(2,textInput("ProbPA35",label=""))
              ),
              fluidRow(
@@ -119,10 +120,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA43","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA42","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA41","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA44","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA43","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA42","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA41","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA44","",min=0,value=1)),
                column(2,textInput("ProbPA45",label=""))
              ),
              fluidRow(
@@ -135,10 +136,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA53","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA52","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA51","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA54","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA53","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA52","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA51","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA54","",min=0,value=1)),
                column(2,textInput("ProbPA55",label=""))
              ),
              fluidRow(
@@ -151,10 +152,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA63","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA62","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA61","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA64","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA63","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA62","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA61","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA64","",min=0,value=1)),
                column(2,textInput("ProbPA65",label=""))
              ),
              fluidRow(
@@ -167,10 +168,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA73","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA72","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA71","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA74","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA73","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA72","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA71","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA74","",min=0,value=1)),
                column(2,textInput("ProbPA75",label=""))
              ),
              fluidRow(
@@ -183,10 +184,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA83","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA82","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA81","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA84","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA83","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA82","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA81","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA84","",min=0,value=1)),
                column(2,textInput("ProbPA85",label=""))
              ),
              fluidRow(
@@ -199,10 +200,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA93","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA92","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA91","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA94","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA93","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA92","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA91","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA94","",min=0,value=1)),
                column(2,textInput("ProbPA95",label=""))
              ),
              fluidRow(
@@ -215,10 +216,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbPA103","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA102","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbPA101","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbPA104","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbPA103","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA102","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA101","weight",min=0,value=1)),
+               column(2,numericInput("ProbPA104","",min=0,value=1)),
                column(2,textInput("ProbPA105",label=""))
              )
     ), 
@@ -226,16 +227,16 @@ ui <- fluidPage(
              fluidRow(
                column(2,strong("Attribute description")),
                column(2,strong("")),
-               column(2,strong("Attribute score")),
+               column(2,strong("Score weights")),
                column(2,strong("")),
                column(2,strong("Attribute weight")),
                column(2,strong("Comments"))
              ),
              fluidRow(
                column(2,strong("")),
-               column(2,strong("High(3)")),
-               column(2,strong("Moderate(2)")),
                column(2,strong("Low(1)")),
+               column(2,strong("Moderate(2)")),
+               column(2,strong("High(3)")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -249,10 +250,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA13","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA12","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA11","probability",max=1,min=0,value=1)),
-               column(2,numericInput("ProbSA14","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA13","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA12","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA11","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA14","",min=0,value=1)),
                column(2,textInput("ProbSA15",label=""))
              ),
              fluidRow(
@@ -265,10 +266,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA23","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA22","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA21","probability",max=1,min=0,value=1)),
-               column(2,numericInput("ProbSA24","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA23","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA22","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA21","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA24","",min=0,value=1)),
                column(2,textInput("ProbSA25",label=""))
              ),
              fluidRow(
@@ -281,10 +282,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA33","probability",max=1,min=0,value=1)),
-               column(2,numericInput("ProbSA32","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA31","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA34","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA33","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA32","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA31","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA34","",min=0,value=1)),
                column(2,textInput("ProbSA35",label=""))
              ),
              fluidRow(
@@ -297,10 +298,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA43","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA42","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA41","probability",max=1,min=0,value=1)),
-               column(2,numericInput("ProbSA44","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA43","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA42","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA41","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA44","",min=0,value=1)),
                column(2,textInput("ProbSA45",label=""))
              ),
              fluidRow(
@@ -313,10 +314,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA53","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA52","probability",max=1,min=0,value=0)),
-               column(2,numericInput("ProbSA51","probability",max=1,min=0,value=1)),
-               column(2,numericInput("ProbSA54","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA53","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA52","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA51","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA54","",min=0,value=1)),
                column(2,textInput("ProbSA55",label=""))
              ),
              fluidRow(
@@ -329,10 +330,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA63","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA62","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA61","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA64","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA63","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA62","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA61","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA64","",min=0,value=1)),
                column(2,textInput("ProbSA65",label=""))
              ),
              fluidRow(
@@ -345,10 +346,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA73","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA72","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA71","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA74","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA73","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA72","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA71","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA74","",min=0,value=1)),
                column(2,textInput("ProbSA75",label=""))
              ),
              fluidRow(
@@ -361,10 +362,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA83","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA82","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA81","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA84","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA83","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA82","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA81","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA84","",min=0,value=1)),
                column(2,textInput("ProbSA85",label=""))
              ),
              fluidRow(
@@ -377,10 +378,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA93","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA92","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA91","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA94","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA93","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA92","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA91","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA94","",min=0,value=1)),
                column(2,textInput("ProbSA95",label=""))
              ),
              fluidRow(
@@ -393,10 +394,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA103","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA102","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA101","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA104","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA103","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA102","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA101","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA104","",min=0,value=1)),
                column(2,textInput("ProbSA105",label=""))
              ),
              fluidRow(
@@ -409,10 +410,10 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA113","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA112","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA111","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA114","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA113","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA112","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA111","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA114","",min=0,value=1)),
                column(2,textInput("ProbSA115",label=""))
              ),
              fluidRow(
@@ -425,23 +426,25 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2),
-               column(2,numericInput("ProbSA123","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA122","probability",max=1,min=0,value=0.4)),
-               column(2,numericInput("ProbSA121","probability",max=1,min=0,value=0.3)),
-               column(2,numericInput("ProbSA124","",max=4,min=0,value=1)),
+               column(2,numericInput("ProbSA123","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA122","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA121","weight",min=0,value=1)),
+               column(2,numericInput("ProbSA124","",min=0,value=1)),
                column(2,textInput("ProbSA125",label=""))
              )), 
     tabPanel("Results", 
              fluidRow(column(3,radioButtons("plotType","Display type",choiceNames=c("Bi-plot","Vulnerability Density","Attribute Uncertainty"),choiceValues = c(1,2,3),selected=1)),
-                      column(3,numericInput("LowVuln","Low vulnerability threshold",max=2.828427,min=0,value=1.5),
-                             numericInput("HighVuln","High vulnerability threshold",max=2.828427,min=0,value=2))),
+                      column(3,numericInput("LowVuln","Low vulnerability threshold",max=2.828427,min=0,value=1.8),
+                             numericInput("ModVuln","Moderate vulnerability threshold",max=2.828427,min=0,value=2),
+                             numericInput("HighVuln","High vulnerability threshold",max=2.828427,min=0,value=2.2),
+                             selectInput("xyChoice","Assessments to plot",choices=NULL,multiple=TRUE))),
              plotOutput("PSA_Results",width="700px",height='700px'))
   )
   
   )
 
 
-write.files<-function(input,output,session,PSMatrix){
+write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   
   save.csv.name<-paste0(getwd(),"/",input$AssessmentName,"_AttVals.csv")
   save.PvS.name<-paste0(getwd(),"/",input$AssessmentName,"_PvS.png")
@@ -454,6 +457,8 @@ write.files<-function(input,output,session,PSMatrix){
   
   prodMatrix<-matrix(NA,nrow=10000,ncol=11)
   suscMatrix<-matrix(NA,nrow=10000,ncol=13)
+  prod.uncert<-vector(length=10)
+  susc.uncert<-vector(length=12)
   sumProdWeights<-0
   quantsProd<-matrix(NA,nrow=7,ncol=10)
   for(i in 1:10){
@@ -461,6 +466,9 @@ write.files<-function(input,output,session,PSMatrix){
     sumProdWeights<-sumProdWeights+eval(parse(text=paste0("input$ProbPA",i,4)))
     temp.data<-sort(prodMatrix[,i])
     quantsProd[,i]<-c(temp.data[1],sum(temp.data[1:2500])/2500,sum(temp.data[1:5000])/5000,sum(temp.data)/10000,sum(temp.data[5001:10000])/5000,sum(temp.data[7501:10000])/2500,temp.data[10000])
+    prod.uncert[i]<-sum(abs(eval(parse(text=paste0("input$ProbPA",i,3)))-eval(parse(text=paste0("input$ProbPA",i,2)))),
+                        abs(eval(parse(text=paste0("input$ProbPA",i,3)))-eval(parse(text=paste0("input$ProbPA",i,1)))),
+                        abs(eval(parse(text=paste0("input$ProbPA",i,2)))-eval(parse(text=paste0("input$ProbPA",i,1)))))/(2*sum(eval(parse(text=paste0("input$ProbPA",i,3))),eval(parse(text=paste0("input$ProbPA",i,2))),eval(parse(text=paste0("input$ProbPA",i,1)))))
   }
   
   prodMatrix[,11]<-apply(prodMatrix[,1:10],1,sum)
@@ -482,10 +490,13 @@ write.files<-function(input,output,session,PSMatrix){
   
   sumSuscWeights<-0
   for(i in 1:12){
-    suscMatrix[,i]<-eval(parse(text=paste0("input$ProbSA",i,4)))*sample(c(3,2,1),10000,replace=TRUE,prob=c(eval(parse(text=paste0("input$ProbSA",i,3))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,1)))))
+    suscMatrix[,i]<-eval(parse(text=paste0("input$ProbSA",i,4)))*sample(c(3,2,1),10000,replace=TRUE,prob=c(eval(parse(text=paste0("input$ProbSA",i,1))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,3)))))
     sumSuscWeights<-sumSuscWeights+eval(parse(text=paste0("input$ProbSA",i,4)))
     temp.data<-sort(suscMatrix[,i])
     quantsSusc[,i]<-c(temp.data[1],sum(temp.data[1:2500])/2500,sum(temp.data[1:5000])/5000,sum(temp.data)/10000,sum(temp.data[5001:10000])/5000,sum(temp.data[7501:10000])/2500,temp.data[10000])
+    susc.uncert[i]<-sum(abs(eval(parse(text=paste0("input$ProbSA",i,3)))-eval(parse(text=paste0("input$ProbSA",i,2)))),
+                        abs(eval(parse(text=paste0("input$ProbSA",i,3)))-eval(parse(text=paste0("input$ProbSA",i,1)))),
+                        abs(eval(parse(text=paste0("input$ProbSA",i,2)))-eval(parse(text=paste0("input$ProbSA",i,1)))))/(2*sum(eval(parse(text=paste0("input$ProbSA",i,3))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,1)))))
   }
   suscMatrix[,13]<-apply(suscMatrix[,1:12],1,sum)
   suscMatrix[,13]<-suscMatrix[,13]/sumSuscWeights
@@ -506,12 +517,13 @@ write.files<-function(input,output,session,PSMatrix){
   vuln<-sqrt((((3-prodMatrix[,11])*(3-prodMatrix[,11]))+((suscMatrix[,13]-1)*(suscMatrix[,13]-1))))
   
   png(file=save.PvS.name, width = 700, height = 700, units = "px")
-  
-  plot(NA,xlab="Productivity",ylab="Susceptability",xlim=c(3,1),ylim=c(1,3))
+  plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
   polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
   
   newVal<-0
@@ -523,18 +535,46 @@ write.files<-function(input,output,session,PSMatrix){
   }
   polygon(x=c(3.08,3.08,0.92,0.92),y=c(0.92,3.08,3.08,0.92),lwd=4)
   
+  
+  
+  if(((ProdQuants[5]-ProdQuants[1])==0) | ((SuscQuants[5]-SuscQuants[1])==0)){
+    bord[1]<-"black"
+  }else{
+    bord[1]<-NA
+  }
   #draw.ellipse(x=2,y=2,a=,b=1,lty=3,lwd=3,deg=T,segment=c(0,90))
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=3)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=3)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=3)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=3)
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
   
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=6)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=6)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=6)
-  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=6)
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+  draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
   
-  points(x=ProdQuants[3],y=SuscQuants[3],pch=16,cex=2,col="dark blue")
+  if(length(input$xyChoice)>=1){
+    
+    sortingMat<-matrix(NA,nrow=length(input$xyChoice),ncol=2)
+    sortingMat[1:length(input$xyChoice),1]<-1:length(input$xyChoice)
+    sortingMat[1:length(input$xyChoice),2]<-match(input$xyChoice,split3)
+    sortingMat<-sortingMat[order(sortingMat[,2]),,drop=FALSE]
+    
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),5]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),10]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),1],b=Quants.Matrix[match(input$xyChoice,split3),10]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),1],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),6],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),5]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),6],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+    
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),4]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),9]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),2],b=Quants.Matrix[match(input$xyChoice,split3),9]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),2],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),7],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+    draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),4]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),7],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+    
+    points(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],pch=16,cex=2,col="black")
+    text(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],labels=substr(input$xyChoice,1,nchar(input$xyChoice)-4),pos=4,col="white")
+  }
+  
+  points(x=ProdQuants[3],y=SuscQuants[3],pch=16,cex=2,col="Blue")
   
   dev.off()
   
@@ -566,82 +606,73 @@ write.files<-function(input,output,session,PSMatrix){
   
   png(file=save.AttSD.name, width = 700, height = 700, units = "px")
   
-  plot(NA,xlim=c(-2,4),ylim=c(0.5,23.5),xlab="",ylab="",axes=FALSE)
+  plot(NA,xlim=c(-1.1,4.2),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
   
   for(i in 1:10){
-    text(x=-2,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
-    if(((quantsProd[5,i])-(quantsProd[3,i]))>1){
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="dark red")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="dark red")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="dark red")
-    }else if(((quantsProd[5,i])-(quantsProd[3,i]))>.5){
+    text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
+    text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
+    if(prod.uncert[i]<=0.25){
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
+      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="red")
+    }else if(prod.uncert[i]<=0.5){
       lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
       lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
       points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="orange")
+    }else if(prod.uncert[i]<=0.75){
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
+      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="yellow")
     }else{
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="dark green")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="dark green")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="dark green")
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
+      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="green")
     }
-    lines(x=c(-2.1,4),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
+    lines(x=c(-1.2,4.2),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
   }
   
   for(i in 1:12){
-    text(x=-2,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
-    if(((quantsSusc[5,i])-(quantsSusc[3,i]))>1){
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="dark red")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="dark red")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="dark red")
-    }else if(((quantsSusc[5,i])-(quantsSusc[3,i]))>0.5){
+    text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
+    text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
+    if(susc.uncert[i]<=0.25){
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
+      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="red")
+    }else if(susc.uncert[i]<=0.5){
       lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
       lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
       points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="orange")
+    }else if(susc.uncert[i]<=0.75){
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
+      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
     }else{
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="dark green")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="dark green")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="dark green")
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
+      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="green")
     }
     
-    lines(x=c(-2.1,4),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
+    lines(x=c(-1.2,4.2),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
   }
   
-  lines(x=c(0,0),y=c(0.5,12.5),lty=1,lwd=3)
-  lines(x=c(0,0),y=c(13.5,23.5),lty=1,lwd=3)
-  polygon(x=c(-2.1,-2.1,4,4),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
-  polygon(x=c(-2.1,-2.1,4,4),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
+  text(x=2,y=24,cex=2,labels="Attribute Score Range and Quality",pos=3)
+  mtext(text=c("Score","Quality"),cex=1.5,side=1,at=c(2,3.85),line=1)
+  lines(x=c(0.6,0.6),y=c(0.5,12.5),lty=1,lwd=3)
+  lines(x=c(0.6,0.6),y=c(13.5,23.5),lty=1,lwd=3)
+  lines(x=c(3.4,3.4),y=c(0.5,12.5),lty=1,lwd=3)
+  lines(x=c(3.4,3.4),y=c(13.5,23.5),lty=1,lwd=3)
+  polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
+  polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
   axis(side=1,at=c(1,2,3),pos=0.5)
-  
   
   dev.off()
 }
 
 server <- function(input, output, session) {
-
   
-  observeEvent(input$AssessmentName,{
-  output$downloadAssessment<-downloadHandler(
-    filename = paste0(input$AssessmentName,"_PSA_Results.zip"),
-    content =function(file){
-      true.wd<-getwd()
-      setwd(paste0(true.wd,"/Downloads"))
-      save.csv.name<-paste0(input$AssessmentName,"_AttVals.csv")
-      save.PvS.name<-paste0(input$AssessmentName,"_PvS.png")
-      save.Vuln.name<-paste0(input$AssessmentName,"_Vuln.png")
-      save.AttSD.name<-paste0(input$AssessmentName,"_AttSD.png")
-      
-      files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
-      unlink(files)
-      
-      write.files(input,output,session,PSMatrix)
-      
-      zip::zip(file,files)
-      unlink(files)
-      setwd(true.wd)
-      
-    },
-    contentType =  "application/zip"
-  )
-  })
+  Quants.Matrix<-matrix(NA,nrow=100,ncol=10)
+  bord<-vector(length=100)
+  
   curr<-getwd()
   #Read all the directories in Assessments folder
   assessments<-c("",list.files(paste(curr,"/Assessments",sep=""),recursive = FALSE))
@@ -658,8 +689,66 @@ server <- function(input, output, session) {
   split2[[1]]<-"DNU"
   names(split2)<-split
   
+  
   updateSelectInput(session,"chooseAssessment",choices=split2)
+  
+  split3<-split2
+  names(split3)<-split
+  split3[[1]]<-NULL
+  updateSelectInput(session,"xyChoice",choices=split3)
+  
   PSMatrix<-matrix(NA,nrow=22,ncol=5)
+  
+  observeEvent(input$AssessmentName,{
+  output$downloadAssessment<-downloadHandler(
+    filename = paste0(input$AssessmentName,"_PSA_Results.zip"),
+    content =function(file){
+      true.wd<-getwd()
+      setwd(paste0(true.wd,"/Downloads"))
+      save.csv.name<-paste0(input$AssessmentName,"_AttVals.csv")
+      save.PvS.name<-paste0(input$AssessmentName,"_PvS.png")
+      save.Vuln.name<-paste0(input$AssessmentName,"_Vuln.png")
+      save.AttSD.name<-paste0(input$AssessmentName,"_AttSD.png")
+      
+      files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+      unlink(files)
+      
+      write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
+      
+      zip::zip(file,files)
+      unlink(files)
+      setwd(true.wd)
+      
+    },
+    contentType =  "application/zip"
+  )
+  })
+  
+  observeEvent(input$xyChoice,{
+    output$downloadAssessment<-downloadHandler(
+      filename = paste0(input$AssessmentName,"_PSA_Results.zip"),
+      content =function(file){
+        true.wd<-getwd()
+        setwd(paste0(true.wd,"/Downloads"))
+        save.csv.name<-paste0(input$AssessmentName,"_AttVals.csv")
+        save.PvS.name<-paste0(input$AssessmentName,"_PvS.png")
+        save.Vuln.name<-paste0(input$AssessmentName,"_Vuln.png")
+        save.AttSD.name<-paste0(input$AssessmentName,"_AttSD.png")
+        
+        files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+        unlink(files)
+        
+        write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
+        
+        zip::zip(file,files)
+        unlink(files)
+        setwd(true.wd)
+        
+      },
+      contentType =  "application/zip"
+    )
+  })
+  
   observe({
     outputData<-list()
     
@@ -672,9 +761,9 @@ server <- function(input, output, session) {
     }
     
     for(i in 1:12){
-      PSMatrix[(i+10),]<<-c(eval(parse(text=paste0("input$ProbSA",i,3))),
+      PSMatrix[(i+10),]<<-c(eval(parse(text=paste0("input$ProbSA",i,1))),
                             eval(parse(text=paste0("input$ProbSA",i,2))),
-                            eval(parse(text=paste0("input$ProbSA",i,1))),
+                            eval(parse(text=paste0("input$ProbSA",i,3))),
                             eval(parse(text=paste0("input$ProbSA",i,4))),
                             eval(parse(text=paste0("input$ProbSA",i,5))))
     }
@@ -697,9 +786,9 @@ server <- function(input, output, session) {
       }
       
       for(i in 1:12){
-        updateNumericInput(session,paste0("ProbSA",i,3),value=inputData[(i+10),1])
+        updateNumericInput(session,paste0("ProbSA",i,1),value=inputData[(i+10),1])
         updateNumericInput(session,paste0("ProbSA",i,2),value=inputData[(i+10),2])
-        updateNumericInput(session,paste0("ProbSA",i,1),value=inputData[(i+10),3])
+        updateNumericInput(session,paste0("ProbSA",i,3),value=inputData[(i+10),3])
         updateNumericInput(session,paste0("ProbSA",i,4),value=inputData[(i+10),4])
         updateNumericInput(session,paste0("ProbSA",i,5),value=inputData[(i+10),5])
       }
@@ -726,11 +815,20 @@ server <- function(input, output, session) {
     names(split2)<-split
     
     updateSelectInput(session,"chooseAssessment",choices=split2)
+    
+    split3<-split2
+    names(split3)<-split
+    split3[[1]]<-NULL
+    updateSelectInput(session,"xyChoice",choices=split3)
+    
   })
   
+ 
   output$PSA_Results <- renderPlot({
     prodMatrix<-matrix(NA,nrow=10000,ncol=11)
     suscMatrix<-matrix(NA,nrow=10000,ncol=13)
+    prod.uncert<-vector(length=10)
+    susc.uncert<-vector(length=12)
     sumProdWeights<-0
     quantsProd<-matrix(NA,nrow=7,ncol=10)
     for(i in 1:10){
@@ -738,6 +836,9 @@ server <- function(input, output, session) {
       sumProdWeights<-sumProdWeights+eval(parse(text=paste0("input$ProbPA",i,4)))
       temp.data<-sort(prodMatrix[,i])
       quantsProd[,i]<-c(temp.data[1],sum(temp.data[1:2500])/2500,sum(temp.data[1:5000])/5000,sum(temp.data)/10000,sum(temp.data[5001:10000])/5000,sum(temp.data[7501:10000])/2500,temp.data[10000])
+      prod.uncert[i]<-sum(abs(eval(parse(text=paste0("input$ProbPA",i,3)))-eval(parse(text=paste0("input$ProbPA",i,2)))),
+                          abs(eval(parse(text=paste0("input$ProbPA",i,3)))-eval(parse(text=paste0("input$ProbPA",i,1)))),
+                          abs(eval(parse(text=paste0("input$ProbPA",i,2)))-eval(parse(text=paste0("input$ProbPA",i,1)))))/(2*sum(eval(parse(text=paste0("input$ProbPA",i,3))),eval(parse(text=paste0("input$ProbPA",i,2))),eval(parse(text=paste0("input$ProbPA",i,1)))))
     }
     
     prodMatrix[,11]<-apply(prodMatrix[,1:10],1,sum)
@@ -759,10 +860,13 @@ server <- function(input, output, session) {
     
     sumSuscWeights<-0
     for(i in 1:12){
-      suscMatrix[,i]<-eval(parse(text=paste0("input$ProbSA",i,4)))*sample(c(3,2,1),10000,replace=TRUE,prob=c(eval(parse(text=paste0("input$ProbSA",i,3))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,1)))))
+      suscMatrix[,i]<-eval(parse(text=paste0("input$ProbSA",i,4)))*sample(c(3,2,1),10000,replace=TRUE,prob=c(eval(parse(text=paste0("input$ProbSA",i,1))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,3)))))
       sumSuscWeights<-sumSuscWeights+eval(parse(text=paste0("input$ProbSA",i,4)))
       temp.data<-sort(suscMatrix[,i])
       quantsSusc[,i]<-c(temp.data[1],sum(temp.data[1:2500])/2500,sum(temp.data[1:5000])/5000,sum(temp.data)/10000,sum(temp.data[5001:10000])/5000,sum(temp.data[7501:10000])/2500,temp.data[10000])
+      susc.uncert[i]<-sum(abs(eval(parse(text=paste0("input$ProbSA",i,3)))-eval(parse(text=paste0("input$ProbSA",i,2)))),
+                          abs(eval(parse(text=paste0("input$ProbSA",i,3)))-eval(parse(text=paste0("input$ProbSA",i,1)))),
+                          abs(eval(parse(text=paste0("input$ProbSA",i,2)))-eval(parse(text=paste0("input$ProbSA",i,1)))))/(2*sum(eval(parse(text=paste0("input$ProbSA",i,3))),eval(parse(text=paste0("input$ProbSA",i,2))),eval(parse(text=paste0("input$ProbSA",i,1)))))
     }
     suscMatrix[,13]<-apply(suscMatrix[,1:12],1,sum)
     suscMatrix[,13]<-suscMatrix[,13]/sumSuscWeights
@@ -783,11 +887,14 @@ server <- function(input, output, session) {
     vuln<-sqrt((((3-prodMatrix[,11])*(3-prodMatrix[,11]))+((suscMatrix[,13]-1)*(suscMatrix[,13]-1))))
     
     if(input$plotType==1){
-      plot(NA,xlab="Productivity",ylab="Susceptability",xlim=c(3,1),ylim=c(1,3))
+      showElement("xyChoice")
+      plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
       polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
+      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
+      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
       
       newVal<-0
@@ -799,19 +906,99 @@ server <- function(input, output, session) {
       }
       polygon(x=c(3.08,3.08,0.92,0.92),y=c(0.92,3.08,3.08,0.92),lwd=4)
       
-      #draw.ellipse(x=2,y=2,a=,b=1,lty=3,lwd=3,deg=T,segment=c(0,90))
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=3)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=3)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=3)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=3)
       
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=6)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=6)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=6)
-      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=6)
       
-      points(x=ProdQuants[3],y=SuscQuants[3],pch=16,cex=2,col="dark blue")
+      if(((ProdQuants[5]-ProdQuants[1])==0) | ((SuscQuants[5]-SuscQuants[1])==0)){
+        bord[1]<-"black"
+      }else{
+        bord[1]<-NA
+      }
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[5]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[1],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[5]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[1],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=2,border=bord[1],col=gray(0.4,0.2))
+      
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[4]-SuscQuants[3],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[3]-ProdQuants[2],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+      draw.ellipse(x=ProdQuants[3],y=SuscQuants[3],a=ProdQuants[4]-ProdQuants[3],b=SuscQuants[3]-SuscQuants[2],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=4,border=bord[1],col=gray(0.1,0.5))
+      
+      if(length(input$xyChoice)>=1){
+        
+        sortingMat<-matrix(NA,nrow=length(input$xyChoice),ncol=2)
+        sortingMat[1:length(input$xyChoice),1]<-1:length(input$xyChoice)
+        sortingMat[1:length(input$xyChoice),2]<-match(input$xyChoice,split3)
+        sortingMat<-sortingMat[order(sortingMat[,2]),,drop=FALSE]
+        for(j in sortingMat[,1])
+        {
+          print(input$xyChoice[j])
+          inputData.temp<-read.csv(file=paste0(getwd(),"/Assessments/",input$xyChoice[j]),header=TRUE,row.names = 1)
+          prodMatrix.temp<-matrix(NA,nrow=10000,ncol=11)
+          suscMatrix.temp<-matrix(NA,nrow=10000,ncol=13)
+          sumProdWeights.temp<-0
+          for(i in 1:10){
+            prodMatrix.temp[,i]<-inputData.temp[i,4]*sample(c(3,2,1),10000,replace=TRUE,prob=c(inputData.temp[i,1:3]))
+            sumProdWeights.temp<-sumProdWeights.temp+inputData.temp[i,4]
+          }
+          
+          prodMatrix.temp[,11]<-apply(prodMatrix.temp[,1:10],1,sum)
+          prodMatrix.temp[,11]<-prodMatrix.temp[,11]/sumProdWeights.temp
+          
+          if(min(prodMatrix.temp[,11])==max(prodMatrix.temp[,11])){
+            ProdQuants.temp<-rep(min(prodMatrix.temp[,11]),5)
+          }else{
+            ProdDens.temp<-density(prodMatrix.temp[,11],adjust=1)
+            ProdY.temp<-ProdDens.temp$y[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
+            ProdX.temp<-ProdDens.temp$x[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
+            ProdDensCum.temp<-cumsum(ProdY.temp/sum(ProdY.temp))
+            ProdQuants.temp<-ProdX.temp[c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))]
+          }
+          
+          sumSuscWeights.temp<-0
+          for(i in 1:12){
+            suscMatrix.temp[,i]<-inputData.temp[(i+10),4]*sample(c(3,2,1),10000,replace=TRUE,prob=c(inputData.temp[(i+10),1:3]))
+            sumSuscWeights.temp<-sumSuscWeights.temp+inputData.temp[(i+10),4]
+          }
+          suscMatrix.temp[,13]<-apply(suscMatrix.temp[,1:12],1,sum)
+          suscMatrix.temp[,13]<-suscMatrix.temp[,13]/sumSuscWeights.temp
+          
+          if(min(suscMatrix.temp[,13])==max(suscMatrix.temp[,13])){
+            SuscQuants.temp<-rep(min(suscMatrix.temp[,13]),5)
+          }else{
+            SuscDens.temp<-density(suscMatrix.temp[,13],adjust=1)
+            SuscY.temp<-SuscDens.temp$y[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
+            SuscX.temp<-SuscDens.temp$x[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
+            SuscDensCum.temp<-cumsum(SuscY.temp/sum(SuscY.temp))
+            SuscQuants.temp<-SuscX.temp[c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))]
+          }
+          
+          Quants.Matrix[which(split3==input$xyChoice[j]),1:5]<<-ProdQuants.temp
+          Quants.Matrix[which(split3==input$xyChoice[j]),6:10]<<-SuscQuants.temp
+          
+          if(((Quants.Matrix[which(split3==input$xyChoice[j]),5]-Quants.Matrix[which(split3==input$xyChoice[j]),1])==0) | ((Quants.Matrix[which(split3==input$xyChoice[j]),10]-Quants.Matrix[which(split3==input$xyChoice[j]),6])==0)){
+            bord[which(split3==input$xyChoice[j])+1]<<-"black"
+          }else{
+            bord[which(split3==input$xyChoice[j])+1]<<-NA
+          }
+        }
+        
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),5]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),10]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),1],b=Quants.Matrix[match(input$xyChoice,split3),10]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),1],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),6],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),5]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),6],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=2,border=bord[match(input$xyChoice,split3)+1],col=gray(0.4,0.2))
+
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),4]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),9]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),2],b=Quants.Matrix[match(input$xyChoice,split3),9]-Quants.Matrix[match(input$xyChoice,split3),8],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),3]-Quants.Matrix[match(input$xyChoice,split3),2],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),7],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+        draw.ellipse(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],a=Quants.Matrix[match(input$xyChoice,split3),4]-Quants.Matrix[match(input$xyChoice,split3),3],b=Quants.Matrix[match(input$xyChoice,split3),8]-Quants.Matrix[match(input$xyChoice,split3),7],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=4,border=bord[match(input$xyChoice,split3)+1],col=gray(0.1,0.5))
+
+        points(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],pch=16,cex=2,col="black")
+        text(x=Quants.Matrix[match(input$xyChoice,split3),3],y=Quants.Matrix[match(input$xyChoice,split3),8],labels=substr(input$xyChoice,1,nchar(input$xyChoice)-4),pos=4,col="white")
+      }
+      points(x=ProdQuants[3],y=SuscQuants[3],pch=16,cex=2,col="Blue")
+      
     }else if(input$plotType==2){
+      hideElement("xyChoice")
       if(min(vuln)==max(vuln)){
         dens<-list()
         dens$x<-min(vuln)
@@ -834,50 +1021,64 @@ server <- function(input, output, session) {
       text(x=locations,y=rep(1.11,3),labels=c("Probability Low Vulnerability","Probability Moderate Vulnerability","Probability High Vulnerability"))
       text(x=locations,y=rep(1.05,3),labels=c(round(sum(dens$y[dens$x<=input$LowVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>input$LowVuln & dens$x<input$HighVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>=input$HighVuln])/sum(dens$y),2)))
     }else if(input$plotType==3){
-      
-      plot(NA,xlim=c(-2,4),ylim=c(0.5,23.5),xlab="",ylab="",axes=FALSE)
+      hideElement("xyChoice")
+      plot(NA,xlim=c(-1.1,4.2),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
       
       for(i in 1:10){
-        text(x=-2,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
-        if(((quantsProd[5,i])-(quantsProd[3,i]))>1){
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="dark red")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="dark red")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="dark red")
-        }else if(((quantsProd[5,i])-(quantsProd[3,i]))>.5){
+        text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
+        text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
+        if(prod.uncert[i]<=0.25){
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
+          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="red")
+        }else if(prod.uncert[i]<=0.5){
           lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
           lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
           points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="orange")
+        }else if(prod.uncert[i]<=0.75){
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
+          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="yellow")
         }else{
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="dark green")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="dark green")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="dark green")
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
+          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="green")
         }
-        lines(x=c(-2.1,4),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
+        lines(x=c(-1.2,4.2),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
       }
       
       for(i in 1:12){
-        text(x=-2,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
-        if(((quantsSusc[5,i])-(quantsSusc[3,i]))>1){
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="dark red")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="dark red")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="dark red")
-        }else if(((quantsSusc[5,i])-(quantsSusc[3,i]))>0.5){
+        text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
+        text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
+        if(susc.uncert[i]<=0.25){
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
+          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="red")
+        }else if(susc.uncert[i]<=0.5){
           lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
           lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
           points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="orange")
+        }else if(susc.uncert[i]<=0.75){
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
+          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
         }else{
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="dark green")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="dark green")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="dark green")
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
+          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="green")
         }
         
-        lines(x=c(-2.1,4),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
+        lines(x=c(-1.2,4.2),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
       }
       
-      lines(x=c(0,0),y=c(0.5,12.5),lty=1,lwd=3)
-      lines(x=c(0,0),y=c(13.5,23.5),lty=1,lwd=3)
-      polygon(x=c(-2.1,-2.1,4,4),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
-      polygon(x=c(-2.1,-2.1,4,4),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
+      text(x=2,y=24,cex=2,labels="Attribute Score Range and Quality",pos=3)
+      mtext(text=c("Score","Quality"),cex=1.5,side=1,at=c(2,3.85),line=1)
+      lines(x=c(0.6,0.6),y=c(0.5,12.5),lty=1,lwd=3)
+      lines(x=c(0.6,0.6),y=c(13.5,23.5),lty=1,lwd=3)
+      lines(x=c(3.4,3.4),y=c(0.5,12.5),lty=1,lwd=3)
+      lines(x=c(3.4,3.4),y=c(13.5,23.5),lty=1,lwd=3)
+      polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
+      polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
       axis(side=1,at=c(1,2,3),pos=0.5)
     }
   })

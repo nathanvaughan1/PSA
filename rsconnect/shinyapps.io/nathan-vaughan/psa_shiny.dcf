@@ -1,0 +1,10 @@
+name: psa_shiny
+title:
+username:
+account: nathan-vaughan
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 537325
+bundleId: 1665380
+url: https://nathan-vaughan.shinyapps.io/psa_shiny/
+when: 1540584349.66043
