@@ -819,8 +819,8 @@ server <- function(input, output, session) {
     split3<-split2
     names(split3)<-split
     split3[[1]]<-NULL
+    split3<<-split3
     updateSelectInput(session,"xyChoice",choices=split3)
-    
   })
   
  
