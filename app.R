@@ -450,11 +450,16 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   save.PvS.name<-paste0(getwd(),"/",input$AssessmentName,"_PvS.png")
   save.Vuln.name<-paste0(getwd(),"/",input$AssessmentName,"_Vuln.png")
   save.AttSD.name<-paste0(getwd(),"/",input$AssessmentName,"_AttSD.png")
+  save.PSV.name<-paste0(getwd(),"/",input$AssessmentName,"_PSVVals.csv")
   
   #files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
   
   write.csv(PSMatrix,file=save.csv.name)
   
+  PSVMatrix<-matrix(NA,nrow=3,ncol=8)
+  colnames(PSVMatrix)<-c("Attribute","mean","standard deviation","2.5 percent quantile","25 percent quantile","50 percent quantile", "75 percent quantile", "97.5 percent quantile")
+  rownames(PSVMatrix)
+  PSVMatrix[,1]<-c("Productivity","Susceptability","Vulnerability")
   prodMatrix<-matrix(NA,nrow=10000,ncol=11)
   suscMatrix<-matrix(NA,nrow=10000,ncol=13)
   prod.uncert<-vector(length=10)
@@ -486,6 +491,7 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   meanprod<-apply(prodMatrix,2,sum)/10000
   varprod<-apply(prodMatrix,2,var)
   stdevprod<-sqrt(varprod)
+  PSVMatrix[1,2:8]<-c(meanprod[11],stdevprod[11],ProdQuants[1],ProdQuants[2],ProdQuants[3],ProdQuants[4],ProdQuants[5])
   quantsSusc<-matrix(NA,nrow=7,ncol=12)
   
   sumSuscWeights<-0
@@ -513,6 +519,7 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   meansusc<-apply(suscMatrix,2,sum)/10000
   varsusc<-apply(suscMatrix,2,var)
   stdevsusc<-sqrt(varsusc)
+  PSVMatrix[2,2:8]<-c(meansusc[13],stdevsusc[13],SuscQuants)
   
   vuln<-sqrt((((3-prodMatrix[,11])*(3-prodMatrix[,11]))+((suscMatrix[,13]-1)*(suscMatrix[,13]-1))))
   
@@ -605,6 +612,17 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   dev.off()
   
   png(file=save.AttSD.name, width = 700, height = 700, units = "px")
+  
+  vulnCummDen<-cumsum(dens$y)
+  vulnCummDen<-vulnCummDen/vulnCummDen[length(vulnCummDen)]
+  vulnQuants<-dens$x[c(length(vulnCummDen[vulnCummDen<=0.025]),length(vulnCummDen[vulnCummDen<=0.25]),length(vulnCummDen[vulnCummDen<=0.5]),length(vulnCummDen[vulnCummDen<=0.75]),length(vulnCummDen[vulnCummDen<=0.975]))]
+  meanvuln<-mean(vuln,na.rm = T)
+  varvuln<-var(vuln,na.rm = T)
+  stdevvuln<-sqrt(varvuln)
+  
+  PSVMatrix[3,2:8]<-c(meanvuln,stdevvuln,vulnQuants)
+  
+  write.csv(PSVMatrix,file=save.PSV.name,row.names = FALSE)
   
   plot(NA,xlim=c(-1.1,4.2),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
   
@@ -709,8 +727,9 @@ server <- function(input, output, session) {
       save.PvS.name<-paste0(input$AssessmentName,"_PvS.png")
       save.Vuln.name<-paste0(input$AssessmentName,"_Vuln.png")
       save.AttSD.name<-paste0(input$AssessmentName,"_AttSD.png")
+      save.PSV.name<-paste0(input$AssessmentName,"_PSVVals.csv")
       
-      files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+      files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name,save.PSV.name)
       unlink(files)
       
       write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
@@ -734,8 +753,9 @@ server <- function(input, output, session) {
         save.PvS.name<-paste0(input$AssessmentName,"_PvS.png")
         save.Vuln.name<-paste0(input$AssessmentName,"_Vuln.png")
         save.AttSD.name<-paste0(input$AssessmentName,"_AttSD.png")
+        save.PSV.name<-paste0(input$AssessmentName,"_PSVVals.csv")
         
-        files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+        files<-c(save.csv.name,save.PvS.name,save.Vuln.name,save.AttSD.name,save.PSV.name)
         unlink(files)
         
         write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
