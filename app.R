@@ -802,8 +802,14 @@ server <- function(input, output, session) {
     
     for(i in 1:10){
       for(j in 1:4){
-        if(is.na(eval(parse(text=paste0("input$ProbPA",i,j))))){
+        if(is.na(as.numeric(eval(parse(text=paste0("input$ProbPA",i,j)))))){
           updateNumericInput(session=session,inputId = paste0("ProbPA",i,j),value=0)
+        }else{
+          if(as.numeric(eval(parse(text=paste0("input$ProbPA",i,j))))<=0){
+            updateNumericInput(session=session,inputId = paste0("ProbPA",i,j),value=0)
+          }else{
+             updateNumericInput(session=session,inputId = paste0("ProbPA",i,j),value=as.numeric(eval(parse(text=paste0("input$ProbPA",i,j)))))
+          }
         }
       }
       
@@ -817,8 +823,14 @@ server <- function(input, output, session) {
     
     for(i in 1:12){
       for(j in 1:4){
-        if(is.na(eval(parse(text=paste0("input$ProbSA",i,j))))){
+        if(is.na(as.numeric(eval(parse(text=paste0("input$ProbSA",i,j)))))){
           updateNumericInput(session=session,inputId = paste0("ProbSA",i,j),value=0)
+        }else{
+          if(as.numeric(eval(parse(text=paste0("input$ProbSA",i,j))))<=0){
+            updateNumericInput(session=session,inputId = paste0("ProbSA",i,j),value=0)
+          }else{
+            updateNumericInput(session=session,inputId = paste0("ProbSA",i,j),value=as.numeric(eval(parse(text=paste0("input$ProbSA",i,j)))))
+          }
         }
       }
       
