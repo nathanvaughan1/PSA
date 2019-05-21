@@ -617,9 +617,12 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   
   plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
   
+  Prod.Att.names<-c("r(intrinsic increase)","Maximum age","Maximum size","VonBert (K)","Natural mortality","Measured fecundity","Breeding strategy",
+                    "Recruitment","Age at maturity","Mean trophic level")
+  
   #scale_prod<-vector(length=10)
   for(i in 1:10){
-    text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
+    text(x=-1.2,y=(24-i),labels=paste0(Prod.Att.names[i]),pos=4)
     text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
     text(x=4.5,y=(24-i),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),2)),pos=4)
     #scale_prod[i]<-as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
@@ -646,8 +649,11 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
     lines(x=c(-1.2,5),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
   }
   
+  Susc.Att.names<-c("Management strategy","Areal overlap","Geographic concentration","Vertical overlap","Spawning stock biomass", "Fishing rate relative to M",
+                    "Seasonal migrations","Behavioral responses","Morphology affecting capture","Post release survival", "Value of fishery", "Fishery impact to habitat")
+  
   for(i in 1:12){
-    text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
+    text(x=-1.2,y=(24-(11+i)),labels=paste0(Susc.Att.names[i]),pos=4)
     text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
     text(x=4.5,y=(24-(11+i)),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),2)),pos=4)
     if(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))==0){
@@ -1096,9 +1102,12 @@ server <- function(input, output, session) {
       hideElement("xyChoice")
       plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
       
+      Prod.Att.names<-c("r(intrinsic increase)","Maximum age","Maximum size","VonBert (K)","Natural mortality","Measured fecundity","Breeding strategy",
+                        "Recruitment","Age at maturity","Mean trophic level")
+      
       #scale_prod<-vector(length=10)
       for(i in 1:10){
-        text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
+        text(x=-1.2,y=(24-i),labels=paste0(Prod.Att.names[i]),pos=4)
         text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
         text(x=4.5,y=(24-i),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),2)),pos=4)
         #scale_prod[i]<-as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
@@ -1125,8 +1134,11 @@ server <- function(input, output, session) {
         lines(x=c(-1.2,5),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
       }
       
+      Susc.Att.names<-c("Management strategy","Areal overlap","Geographic concentration","Vertical overlap","Spawning stock biomass", "Fishing rate relative to M",
+                        "Seasonal migrations","Behavioral responses","Morphology affecting capture","Post release survival", "Value of fishery", "Fishery impact to habitat")
+      
       for(i in 1:12){
-        text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
+        text(x=-1.2,y=(24-(11+i)),labels=paste0(Susc.Att.names[i]),pos=4)
         text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
         text(x=4.5,y=(24-(11+i)),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),2)),pos=4)
         if(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))==0){
