@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(shinyjs)
 library(plotrix)
@@ -370,9 +361,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Morphology affecting capture")),
-               column(2,h5("low selectivity to the fishing gear")),
-               column(2,h5("moderate selectivity to the fishing gear")),
-               column(2,h5("high selectivity to the fishing gear")),
+               column(2,h5("Low selectivity to the fishing gear")),
+               column(2,h5("Moderate selectivity to the fishing gear")),
+               column(2,h5("High selectivity to the fishing gear")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -417,10 +408,10 @@ ui <- fluidPage(
                column(2,textInput("ProbSA115",label=""))
              ),
              fluidRow(
-               column(2,h5("Fishery impact to EFH or habitat in general for non-targets")),
-               column(2,h5("Adverse effects absent, minimal or temporary")),
-               column(2,h5("Adverse effects more than minimal or temporary but are mitigated")),
-               column(2,h5("Adverse effects more than minimal or temporary and are not mitigated")),
+               column(2,h5("Fishery impact to essential fish habitat or habitat in general for non-targets")),
+               column(2,h5("Adverse effects absent, minimal, or temporary")),
+               column(2,h5("Significant and persistent adverse effects that are mitigated")),
+               column(2,h5("Significant and persistent adverse effects that are not mitigated")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -624,63 +615,78 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   
   write.csv(PSVMatrix,file=save.PSV.name,row.names = FALSE)
   
-  plot(NA,xlim=c(-1.1,4.2),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
+  plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
   
+  #scale_prod<-vector(length=10)
   for(i in 1:10){
     text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
     text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
-    if(prod.uncert[i]<=0.25){
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="red")
+    text(x=4.5,y=(24-i),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),2)),pos=4)
+    #scale_prod[i]<-as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
+    #as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
+    if(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4))))==0){
+      
+    }else if(prod.uncert[i]<=0.25){
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
+      points(x=c((meanprod[i])/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4))))),y=c((24-i)),pch=16,cex=3,col="red")
     }else if(prod.uncert[i]<=0.5){
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="orange")
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
+      points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="orange")
     }else if(prod.uncert[i]<=0.75){
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="yellow")
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
+      points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="yellow")
     }else{
-      lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
-      lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
-      points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="green")
+      lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
+      lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
+      points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="green")
     }
-    lines(x=c(-1.2,4.2),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
+    lines(x=c(-1.2,5),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
   }
   
   for(i in 1:12){
     text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
     text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
-    if(susc.uncert[i]<=0.25){
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="red")
+    text(x=4.5,y=(24-(11+i)),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),2)),pos=4)
+    if(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))==0){
+      
+    }else if(susc.uncert[i]<=0.25){
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
+      points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="red")
     }else if(susc.uncert[i]<=0.5){
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="orange")
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
+      points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="orange")
     }else if(susc.uncert[i]<=0.75){
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
+      points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
     }else{
-      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
-      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
-      points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="green")
+      lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
+      lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
+      points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="green")
     }
     
-    lines(x=c(-1.2,4.2),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
+    lines(x=c(-1.2,5),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
   }
   
-  text(x=2,y=24,cex=2,labels="Attribute Score Range and Quality",pos=3)
-  mtext(text=c("Score","Quality"),cex=1.5,side=1,at=c(2,3.85),line=1)
+  text(x=2,y=24,cex=2,labels="Attribute Score Range, Quality, and Weight",pos=3)
+  mtext(text=c("Score","Quality","Weight"),cex=1.5,side=1,at=c(2,3.85,4.6),line=1)
+  #mtext(text=c("*Quality is a value between 0 (equal probability of all 3 scores) and 1 (100% probability of a single score)"),cex=1,side=1,at=c(2),line=2)
+  mtext(text=c("*Quality is a value between 0 and 1 equal to the probability "),cex=1,side=1,at=c(2),line=2)
+  mtext(text=c("of the most likely score minus the probability of the least likely score."),cex=1,side=1,at=c(2),line=3)
+  
   lines(x=c(0.6,0.6),y=c(0.5,12.5),lty=1,lwd=3)
   lines(x=c(0.6,0.6),y=c(13.5,23.5),lty=1,lwd=3)
   lines(x=c(3.4,3.4),y=c(0.5,12.5),lty=1,lwd=3)
   lines(x=c(3.4,3.4),y=c(13.5,23.5),lty=1,lwd=3)
-  polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
-  polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
+  lines(x=c(4.2,4.2),y=c(0.5,12.5),lty=1,lwd=3)
+  lines(x=c(4.2,4.2),y=c(13.5,23.5),lty=1,lwd=3)
+  polygon(x=c(-1.2,-1.2,5,5),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
+  polygon(x=c(-1.2,-1.2,5,5),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
   axis(side=1,at=c(1,2,3),pos=0.5)
   
   dev.off()
@@ -790,6 +796,40 @@ server <- function(input, output, session) {
     
     colnames(PSMatrix)<<-c("Probability Score = High (3)","Probability Score = Moderate (2)","Probability Score = Low (1)","Weight","Comments")
     rownames(PSMatrix)<<-c(paste0("Productivity attribute ",1:10),paste0("Susceptibility attribute ",1:12))
+  })
+  
+  observe({
+    
+    for(i in 1:10){
+      for(j in 1:4){
+        if(is.na(eval(parse(text=paste0("input$ProbPA",i,j))))){
+          updateNumericInput(session=session,inputId = paste0("ProbPA",i,j),value=0)
+        }
+      }
+      
+      if(!is.na(eval(parse(text=paste0("input$ProbPA",i,1)))) && !is.na(eval(parse(text=paste0("input$ProbPA",i,2)))) && !is.na(eval(parse(text=paste0("input$ProbPA",i,3))))){
+      if(eval(parse(text=paste0("input$ProbPA",i,1)))==0 && eval(parse(text=paste0("input$ProbPA",i,2)))==0 && eval(parse(text=paste0("input$ProbPA",i,3)))==0){
+        updateNumericInput(session=session,inputId = paste0("ProbPA",i,1),value=1)
+        updateNumericInput(session=session,inputId = paste0("ProbPA",i,2),value=1)
+        updateNumericInput(session=session,inputId = paste0("ProbPA",i,3),value=1)
+      }}
+    }
+    
+    for(i in 1:12){
+      for(j in 1:4){
+        if(is.na(eval(parse(text=paste0("input$ProbSA",i,j))))){
+          updateNumericInput(session=session,inputId = paste0("ProbSA",i,j),value=0)
+        }
+      }
+      
+      if(!is.na(eval(parse(text=paste0("input$ProbSA",i,1)))) && !is.na(eval(parse(text=paste0("input$ProbSA",i,2)))) && !is.na(eval(parse(text=paste0("input$ProbSA",i,3))))){
+      if(eval(parse(text=paste0("input$ProbSA",i,1)))==0 && eval(parse(text=paste0("input$ProbSA",i,2)))==0 && eval(parse(text=paste0("input$ProbSA",i,3)))==0){
+        updateNumericInput(session=session,inputId = paste0("ProbSA",i,1),value=1)
+        updateNumericInput(session=session,inputId = paste0("ProbSA",i,2),value=1)
+        updateNumericInput(session=session,inputId = paste0("ProbSA",i,3),value=1)
+      }}
+    }
+    
   })
   
   observeEvent(input$chooseAssessment,{
@@ -1042,63 +1082,78 @@ server <- function(input, output, session) {
       text(x=locations,y=rep(1.05,3),labels=c(round(sum(dens$y[dens$x<=input$LowVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>input$LowVuln & dens$x<input$HighVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>=input$HighVuln])/sum(dens$y),2)))
     }else if(input$plotType==3){
       hideElement("xyChoice")
-      plot(NA,xlim=c(-1.1,4.2),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
+      plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
       
+      #scale_prod<-vector(length=10)
       for(i in 1:10){
         text(x=-1.1,y=(24-i),labels=paste0("Productivity Attribute ",i),pos=4)
         text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert[i],2)),pos=4)
-        if(prod.uncert[i]<=0.25){
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="red")
+        text(x=4.5,y=(24-i),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),2)),pos=4)
+        #scale_prod[i]<-as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
+        #as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))
+        if(as.numeric(eval(parse(text=paste0("input$ProbPA",i,4))))==0){
+          
+        }else if(prod.uncert[i]<=0.25){
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
+          points(x=c((meanprod[i])/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4))))),y=c((24-i)),pch=16,cex=3,col="red")
         }else if(prod.uncert[i]<=0.5){
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="orange")
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
+          points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="orange")
         }else if(prod.uncert[i]<=0.75){
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="yellow")
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
+          points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="yellow")
         }else{
-          lines(x=c((quantsProd[2,i]),(quantsProd[6,i])),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
-          lines(x=c((quantsProd[3,i]),(quantsProd[5,i])),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
-          points(x=c((meanprod[i])),y=c((24-i)),pch=16,cex=3,col="green")
+          lines(x=c((quantsProd[2,i]),(quantsProd[6,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
+          lines(x=c((quantsProd[3,i]),(quantsProd[5,i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
+          points(x=c((meanprod[i]))/as.numeric(eval(parse(text=paste0("input$ProbPA",i,4)))),y=c((24-i)),pch=16,cex=3,col="green")
         }
-        lines(x=c(-1.2,4.2),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
+        lines(x=c(-1.2,5),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
       }
       
       for(i in 1:12){
         text(x=-1.1,y=(24-(11+i)),labels=paste0("Susceptibility Attribute ",i),pos=4)
         text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert[i],2)),pos=4)
-        if(susc.uncert[i]<=0.25){
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="red")
+        text(x=4.5,y=(24-(11+i)),labels=paste0(round(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),2)),pos=4)
+        if(as.numeric(eval(parse(text=paste0("input$ProbSA",i,4))))==0){
+          
+        }else if(susc.uncert[i]<=0.25){
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
+          points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="red")
         }else if(susc.uncert[i]<=0.5){
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="orange")
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
+          points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="orange")
         }else if(susc.uncert[i]<=0.75){
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
+          points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
         }else{
-          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
-          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)])),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
-          points(x=c((meansusc[i])),y=c((24-(11+i))),pch=16,cex=3,col="green")
+          lines(x=c((quantsSusc[2,(i)]),(quantsSusc[6,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
+          lines(x=c((quantsSusc[3,(i)]),(quantsSusc[5,(i)]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
+          points(x=c((meansusc[i]))/as.numeric(eval(parse(text=paste0("input$ProbSA",i,4)))),y=c((24-(11+i))),pch=16,cex=3,col="green")
         }
         
-        lines(x=c(-1.2,4.2),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
+        lines(x=c(-1.2,5),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
       }
       
-      text(x=2,y=24,cex=2,labels="Attribute Score Range and Quality",pos=3)
-      mtext(text=c("Score","Quality"),cex=1.5,side=1,at=c(2,3.85),line=1)
+      text(x=2,y=24,cex=2,labels="Attribute Score Range, Quality, and Weight",pos=3)
+      mtext(text=c("Score","Quality","Weight"),cex=1.5,side=1,at=c(2,3.85,4.6),line=1)
+      #mtext(text=c("*Quality is a value between 0 (equal probability of all 3 scores) and 1 (100% probability of a single score)"),cex=1,side=1,at=c(2),line=2)
+      mtext(text=c("*Quality is a value between 0 and 1 equal to the probability "),cex=1,side=1,at=c(2),line=2)
+      mtext(text=c("of the most likely score minus the probability of the least likely score."),cex=1,side=1,at=c(2),line=3)
+      
       lines(x=c(0.6,0.6),y=c(0.5,12.5),lty=1,lwd=3)
       lines(x=c(0.6,0.6),y=c(13.5,23.5),lty=1,lwd=3)
       lines(x=c(3.4,3.4),y=c(0.5,12.5),lty=1,lwd=3)
       lines(x=c(3.4,3.4),y=c(13.5,23.5),lty=1,lwd=3)
-      polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
-      polygon(x=c(-1.2,-1.2,4.2,4.2),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
+      lines(x=c(4.2,4.2),y=c(0.5,12.5),lty=1,lwd=3)
+      lines(x=c(4.2,4.2),y=c(13.5,23.5),lty=1,lwd=3)
+      polygon(x=c(-1.2,-1.2,5,5),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
+      polygon(x=c(-1.2,-1.2,5,5),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
       axis(side=1,at=c(1,2,3),pos=0.5)
     }
   })
