@@ -274,7 +274,7 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Geographic concentration")),
-               column(2,h5("Stock distributed in >50% of its range")),
+               column(2,h5("Stock distributed in <25% of its range")),
                column(2,h5("Stock distributed in 25-50% of its range")),
                column(2,h5("Stock distributed in >50% of its range")),
                column(2,strong("")),
@@ -290,7 +290,7 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Vertical overlap")),
-               column(2,h5(">25% of stock occurs in the depths fished")),
+               column(2,h5("<25% of stock occurs in the depths fished")),
                column(2,h5("25-50% of the stock occurs in the the depths fished")),
                column(2,h5(">50% of the stock occurs in the the depths fished")),
                column(2,strong("")),
