@@ -71,9 +71,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Maximum age")),
-               column(2,h5("<20 years")),
-               column(2,h5("20-40 years")),
-               column(2,h5(">40 years")),
+               column(2,h5("<10 years")),
+               column(2,h5("10-30 years")),
+               column(2,h5(">30 years")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -87,9 +87,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Maximum size")),
-               column(2,h5("<40 cm")),
-               column(2,h5("40-80 cm")),
-               column(2,h5(">80 cm")),
+               column(2,h5("<60 cm")),
+               column(2,h5("60-150 cm")),
+               column(2,h5(">150 cm")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -103,9 +103,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("VonBert (k)")),
-               column(2,h5(">0.2")),
-               column(2,h5("0.1-0.2")),
-               column(2,h5("<0.1")),
+               column(2,h5(">0.25")),
+               column(2,h5("0.15-0.25")),
+               column(2,h5("<0.15")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -119,9 +119,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Natural mortality")),
-               column(2,h5(">0.2")),
-               column(2,h5("0.1-0.2")),
-               column(2,h5("<0.1")),
+               column(2,h5(">0.4")),
+               column(2,h5("0.2-0.4")),
+               column(2,h5("<0.2")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -265,9 +265,9 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(2,h5("Geographic concentration")),
-               column(2,h5("Stock distributed in <25% of its range")),
-               column(2,h5("Stock distributed in 25-50% of its range")),
                column(2,h5("Stock distributed in >50% of its range")),
+               column(2,h5("Stock distributed in 25-50% of its range")),
+               column(2,h5("Stock distributed in <25% of its range")),
                column(2,strong("")),
                column(2,strong(""))
              ),
@@ -700,8 +700,8 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
 
 server <- function(input, output, session) {
   
-  Quants.Matrix<-matrix(NA,nrow=100,ncol=10)
-  bord<-vector(length=100)
+  Quants.Matrix<-matrix(NA,nrow=500,ncol=10)
+  bord<-vector(length=500)
   
   curr<-getwd()
   #Read all the directories in Assessments folder
