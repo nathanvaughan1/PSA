@@ -606,7 +606,7 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   
   vulnCummDen<-cumsum(dens$y)
   vulnCummDen<-vulnCummDen/vulnCummDen[length(vulnCummDen)]
-  vulnQuants<-dens$x[c(length(vulnCummDen[vulnCummDen<=0.025]),length(vulnCummDen[vulnCummDen<=0.25]),length(vulnCummDen[vulnCummDen<=0.5]),length(vulnCummDen[vulnCummDen<=0.75]),length(vulnCummDen[vulnCummDen<=0.975]))]
+  vulnQuants<-dens$x[c(max(1,length(vulnCummDen[vulnCummDen<=0.025])),max(1,length(vulnCummDen[vulnCummDen<=0.25])),max(1,length(vulnCummDen[vulnCummDen<=0.5])),max(1,length(vulnCummDen[vulnCummDen<=0.75])),max(1,length(vulnCummDen[vulnCummDen<=0.975])))]
   meanvuln<-mean(vuln,na.rm = T)
   varvuln<-var(vuln,na.rm = T)
   stdevvuln<-sqrt(varvuln)
