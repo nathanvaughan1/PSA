@@ -825,7 +825,7 @@ write.all.files<-function(input,output,session,split3){
     
     vulnCummDen.temp<-cumsum(dens$y)
     vulnCummDen.temp<-vulnCummDen.temp/vulnCummDen.temp[length(vulnCummDen.temp)]
-    vulnQuants.temp<-dens$x[c(max(1,length(vulnCummDen[vulnCummDen<=0.025])),max(1,length(vulnCummDen[vulnCummDen<=0.25])),max(1,length(vulnCummDen[vulnCummDen<=0.5])),max(1,length(vulnCummDen[vulnCummDen<=0.75])),max(1,length(vulnCummDen[vulnCummDen<=0.975])))]
+    vulnQuants.temp<-dens$x[c(max(1,length(vulnCummDen.temp[vulnCummDen.temp<=0.025])),max(1,length(vulnCummDen.temp[vulnCummDen.temp<=0.25])),max(1,length(vulnCummDen.temp[vulnCummDen.temp<=0.5])),max(1,length(vulnCummDen.temp[vulnCummDen.temp<=0.75])),max(1,length(vulnCummDen.temp[vulnCummDen.temp<=0.975])))]
     meanvuln.temp<-mean(vuln.temp,na.rm = T)
     varvuln.temp<-var(vuln.temp,na.rm = T)
     stdevvuln.temp<-sqrt(varvuln.temp)
