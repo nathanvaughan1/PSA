@@ -18,15 +18,18 @@ ui <- fluidPage(
                   ),
            column(3,
                   fluidRow(
-                    column(12,selectInput("chooseAssessment",label="load existing assessment",choices=list("Choose an existing assessment"="DNU")))
+                    column(12,selectInput("chooseAssessment",label="load existing assessment",choices=list("Choose an existing assessment"="DNU"))),offset=0
                   ),
                   fluidRow(
-                    column(12,downloadButton("downloadAssessment",label="Download Assessement"))
+                    column(12,downloadButton("downloadAssessment",label="Download Assessement")),style='padding-bottom:20px'
+                  ),
+                  fluidRow(
+                    column(12,downloadButton("downloadAllAssessment",label="Download All Assessements"))
                   )
            ),
            column(3,
                   fluidRow(
-                    column(12,textInput("AssessmentName",label="Species name",value=""))
+                    column(12,textInput("AssessmentName",label="Species name",value="")),style='padding-bottom:5px'
                   ),
                   fluidRow(
                     column(12,actionButton("saveAssessment",label="Save Assessment"))
@@ -698,6 +701,265 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   dev.off()
 }
 
+write.all.files<-function(input,output,session,split3){
+  
+  save.csv.name<-paste0(getwd(),"/Downloads/All_AttVals.csv")
+  save.PSV.name<-paste0(getwd(),"/Downloads/All_PSVVals.csv")
+  save.PvS.name<-paste0(getwd(),"/Downloads/All_PvS.png")
+  
+  Quants.Matrix.temp <- matrix(NA,nrow=length(split3),ncol=10)
+  
+  AttMatrix <- matrix(NA,nrow=22*(length(split3)),ncol=6)
+  colnames(AttMatrix) <- c("Assessment","Attribute","Probability Score = High (3)","Probability Score = Moderate (2)","Probability Score = Low (1)","Weight")
+  
+  
+  PSVMatrix <- matrix(NA,nrow=3*(length(split3)),ncol=12)
+  colnames(PSVMatrix) <- c("Assessment","Attribute","mean","standard deviation","2.5 percent quantile","25 percent quantile","50 percent quantile", "75 percent quantile", "97.5 percent quantile","Probability Low Vulnerability","Probability Moderate Vulnerability","Probability High Vulnerability")
+  bord.temp <- vector(length=length(names(split3)))
+  for(j in 1:(length(split3)))
+  {
+    save.Vuln.name.temp <- paste0(getwd(),"/Downloads/",names(split3)[j],"_Vuln.png")
+    save.AttSD.name.temp <- paste0(getwd(),"/Downloads/",names(split3)[j],"_AttSD.png")
+    
+    inputData.temp <- read.csv(file=paste0(getwd(),"/Assessments/",split3[[j]]),header=TRUE,row.names = 1)
+    inputData.temp <- as.matrix(inputData.temp[,-5])
+    AttMatrix[(22*(j-1)+1:22),1] <- rep(names(split3)[j],22)
+    AttMatrix[(22*(j-1)+1:22),2] <- c(paste0("Productivity attribute ",1:10),paste0("Susceptibility attribute ",1:12))
+    AttMatrix[(22*(j-1)+1:22),3:6] <- inputData.temp
+    
+    
+    prodMatrix.temp<-matrix(NA,nrow=10000,ncol=11)
+    suscMatrix.temp<-matrix(NA,nrow=10000,ncol=13)
+    prod.uncert.temp<-vector(length=10)
+    susc.uncert.temp<-vector(length=12)
+    sumProdWeights.temp<-0
+    quantsProd.temp<-matrix(NA,nrow=7,ncol=10)
+    for(i in 1:10){
+      prodMatrix.temp[,i]<-as.numeric(inputData.temp[i,4])*sample(c(3,2,1),10000,replace=TRUE,prob=c(as.numeric(inputData.temp[i,1:3])))
+      sumProdWeights.temp<-sumProdWeights.temp+as.numeric(inputData.temp[i,4])
+      
+      temp.data.temp<-sort(prodMatrix.temp[,i])
+      quantsProd.temp[,i]<-c(temp.data.temp[1],sum(temp.data.temp[1:2500])/2500,sum(temp.data.temp[1:5000])/5000,sum(temp.data.temp)/10000,sum(temp.data.temp[5001:10000])/5000,sum(temp.data.temp[7501:10000])/2500,temp.data.temp[10000])
+      prod.uncert.temp[i]<-sum(abs(inputData.temp[i,3]-inputData.temp[i,2]),
+                               abs(inputData.temp[i,3]-inputData.temp[i,1]),
+                               abs(inputData.temp[i,2]-inputData.temp[i,1]))/(2*sum(inputData.temp[i,1:3]))
+      
+    }
+    
+    prodMatrix.temp[,11]<-apply(prodMatrix.temp[,1:10],1,sum)
+    prodMatrix.temp[,11]<-prodMatrix.temp[,11]/sumProdWeights.temp
+    
+    if(min(prodMatrix.temp[,11])==max(prodMatrix.temp[,11])){
+      ProdQuants.temp<-rep(min(prodMatrix.temp[,11]),5)
+    }else{
+      ProdDens.temp<-density(prodMatrix.temp[,11],adjust=1)
+      ProdY.temp<-ProdDens.temp$y[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
+      ProdX.temp<-ProdDens.temp$x[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
+      ProdDensCum.temp<-cumsum(ProdY.temp/sum(ProdY.temp))
+      ProdQuants.temp<-ProdX.temp[c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))]
+    }
+    meanprod.temp<-apply(prodMatrix.temp,2,sum)/10000
+    varprod.temp<-apply(prodMatrix.temp,2,var)
+    stdevprod.temp<-sqrt(varprod.temp)
+    PSVMatrix[(3*(j-1)+1),]<-c(names(split3)[j],"Productivity",meanprod.temp[11],stdevprod.temp[11],ProdQuants.temp,NA,NA,NA)
+    
+    sumSuscWeights.temp<-0
+    quantsSusc.temp<-matrix(NA,nrow=7,ncol=12)
+    for(i in 1:12){
+      suscMatrix.temp[,i]<-inputData.temp[(i+10),4]*sample(c(3,2,1),10000,replace=TRUE,prob=c(inputData.temp[(i+10),1:3]))
+      sumSuscWeights.temp<-sumSuscWeights.temp+inputData.temp[(i+10),4]
+      temp.data.temp<-sort(suscMatrix.temp[,i])
+      quantsSusc.temp[,i]<-c(temp.data.temp[1],sum(temp.data.temp[1:2500])/2500,sum(temp.data.temp[1:5000])/5000,sum(temp.data.temp)/10000,sum(temp.data.temp[5001:10000])/5000,sum(temp.data.temp[7501:10000])/2500,temp.data.temp[10000])
+      susc.uncert.temp[i]<-sum(abs(inputData.temp[(i+10),3]-inputData.temp[(i+10),2]),
+                               abs(inputData.temp[(i+10),3]-inputData.temp[(i+10),1]),
+                               abs(inputData.temp[(i+10),2]-inputData.temp[(i+10),1]))/(2*sum(inputData.temp[(i+10),1:3]))
+    }
+    suscMatrix.temp[,13]<-apply(suscMatrix.temp[,1:12],1,sum)
+    suscMatrix.temp[,13]<-suscMatrix.temp[,13]/sumSuscWeights.temp
+    
+    if(min(suscMatrix.temp[,13])==max(suscMatrix.temp[,13])){
+      SuscQuants.temp<-rep(min(suscMatrix.temp[,13]),5)
+    }else{
+      SuscDens.temp<-density(suscMatrix.temp[,13],adjust=1)
+      SuscY.temp<-SuscDens.temp$y[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
+      SuscX.temp<-SuscDens.temp$x[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
+      SuscDensCum.temp<-cumsum(SuscY.temp/sum(SuscY.temp))
+      SuscQuants.temp<-SuscX.temp[c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))]
+    }
+    meansusc.temp<-apply(suscMatrix.temp,2,sum)/10000
+    varsusc.temp<-apply(suscMatrix.temp,2,var)
+    stdevsusc.temp<-sqrt(varsusc.temp)
+    PSVMatrix[(3*(j-1)+2),]<-c(names(split3)[j],"Susceptability",meansusc.temp[11],stdevsusc.temp[11],SuscQuants.temp,NA,NA,NA)
+    
+    vuln.temp<-sqrt((((3-prodMatrix.temp[,11])*(3-prodMatrix.temp[,11]))+((suscMatrix.temp[,13]-1)*(suscMatrix.temp[,13]-1))))
+    
+    
+    png(file=save.Vuln.name.temp, width = 700, height = 700, units = "px")
+    
+    if(min(vuln.temp)==max(vuln.temp)){
+      dens<-list()
+      dens$x<-min(vuln.temp)
+      dens$y<-1
+    }else{
+      dens<-density(vuln.temp,adjust=3/min(1,(max(vuln.temp)-min(vuln.temp))))
+      dens$y<-dens$y[dens$x>=min(vuln.temp) & dens$x<=max(vuln.temp)]
+      dens$x<-dens$x[dens$x>=min(vuln.temp) & dens$x<=max(vuln.temp)]
+    }
+    plot(x=dens$x,y=dens$y/max(dens$y),xlim=c(min(vuln.temp)-0.1,max(vuln.temp)+0.1),ylim=c(0,1.1),xlab="Vulnerability",ylab="Probability density",type="l",lty=1,lwd=2,col="dark blue")
+    polygon(x=c(dens$x[1],dens$x,dens$x[length(dens$x)]),y=c(0,dens$y/max(dens$y),0),col="red")
+    if(min(dens$x)<input$HighVuln){
+      polygon(x=c(dens$x[1],dens$x[dens$x<=input$HighVuln],dens$x[length(dens$x[dens$x<=input$HighVuln])]),y=c(0,dens$y[dens$x<=input$HighVuln]/max(dens$y),0),col="orange")
+    }
+    if(min(dens$x)<input$LowVuln){
+      polygon(x=c(dens$x[1],dens$x[dens$x<=input$LowVuln],dens$x[length(dens$x[dens$x<=input$LowVuln])]),y=c(0,dens$y[dens$x<=input$LowVuln]/max(dens$y),0),col="green")
+    }
+    locations<-quantile(dens$x,probs=c(0.15,0.5,0.85))
+    locations<-c((min(vuln.temp)-0.1+0.15*(max(vuln.temp)-min(vuln.temp)+0.2)),(min(vuln.temp)-0.1+0.5*(max(vuln.temp)-min(vuln.temp)+0.2)),(min(vuln.temp)-0.1+0.85*(max(vuln.temp)-min(vuln.temp)+0.2)))
+    text(x=locations,y=rep(1.11,3),labels=c("Probability Low Vulnerability","Probability Moderate Vulnerability","Probability High Vulnerability"))
+    text(x=locations,y=rep(1.05,3),labels=c(round(sum(dens$y[dens$x<=input$LowVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>input$LowVuln & dens$x<input$HighVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>=input$HighVuln])/sum(dens$y),2)))
+    
+    dev.off()  
+    
+    
+    png(file=save.AttSD.name.temp, width = 700, height = 700, units = "px")
+    
+    vulnCummDen.temp<-cumsum(dens$y)
+    vulnCummDen.temp<-vulnCummDen.temp/vulnCummDen.temp[length(vulnCummDen.temp)]
+    vulnQuants.temp<-dens$x[c(max(1,length(vulnCummDen[vulnCummDen<=0.025])),max(1,length(vulnCummDen[vulnCummDen<=0.25])),max(1,length(vulnCummDen[vulnCummDen<=0.5])),max(1,length(vulnCummDen[vulnCummDen<=0.75])),max(1,length(vulnCummDen[vulnCummDen<=0.975])))]
+    meanvuln.temp<-mean(vuln.temp,na.rm = T)
+    varvuln.temp<-var(vuln.temp,na.rm = T)
+    stdevvuln.temp<-sqrt(varvuln.temp)
+    
+    PSVMatrix[(3*(j-1)+3),]<-c(names(split3)[j],"Vulnerability",meanvuln.temp,stdevvuln.temp,vulnQuants.temp,round(sum(dens$y[dens$x<=input$LowVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>input$LowVuln & dens$x<input$HighVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>=input$HighVuln])/sum(dens$y),2))
+    
+    
+    
+    plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
+    
+    Prod.Att.names<-c("r(intrinsic increase)","Maximum age","Maximum size","VonBert (K)","Natural mortality","Measured fecundity","Breeding strategy",
+                      "Recruitment","Age at maturity","Mean trophic level")
+    
+    #scale_prod<-vector(length=10)
+    for(i in 1:10){
+      text(x=-1.2,y=(24-i),labels=paste0(Prod.Att.names[i]),pos=4)
+      text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert.temp[i],2)),pos=4)
+      text(x=4.5,y=(24-i),labels=paste0(round(as.numeric(inputData.temp[i,4]),2)),pos=4)
+      if(as.numeric(inputData.temp[i,4])==0){
+        
+      }else if(prod.uncert.temp[i]<=0.25){
+        lines(x=c((quantsProd.temp[2,i]),(quantsProd.temp[6,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=6,col="red")
+        lines(x=c((quantsProd.temp[3,i]),(quantsProd.temp[5,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=12,col="red")
+        points(x=c((meanprod.temp[i])/as.numeric(inputData.temp[i,4])),y=c((24-i)),pch=16,cex=3,col="red")
+      }else if(prod.uncert.temp[i]<=0.5){
+        lines(x=c((quantsProd.temp[2,i]),(quantsProd.temp[6,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=6,col="orange")
+        lines(x=c((quantsProd.temp[3,i]),(quantsProd.temp[5,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=12,col="orange")
+        points(x=c((meanprod.temp[i]))/as.numeric(inputData.temp[i,4]),y=c((24-i)),pch=16,cex=3,col="orange")
+      }else if(prod.uncert.temp[i]<=0.75){
+        lines(x=c((quantsProd.temp[2,i]),(quantsProd.temp[6,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=6,col="yellow")
+        lines(x=c((quantsProd.temp[3,i]),(quantsProd.temp[5,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=12,col="yellow")
+        points(x=c((meanprod.temp[i]))/as.numeric(inputData.temp[i,4]),y=c((24-i)),pch=16,cex=3,col="yellow")
+      }else{
+        lines(x=c((quantsProd.temp[2,i]),(quantsProd.temp[6,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=6,col="green")
+        lines(x=c((quantsProd.temp[3,i]),(quantsProd.temp[5,i]))/as.numeric(inputData.temp[i,4]),y=c((24-i),(24-i)),lty=1,lwd=12,col="green")
+        points(x=c((meanprod.temp[i]))/as.numeric(inputData.temp[i,4]),y=c((24-i)),pch=16,cex=3,col="green")
+      }
+      lines(x=c(-1.2,5),y=c(((24-i)-0.5),((24-i)-0.5)),lty=1,lwd=3,col="black")
+    }
+    
+    Susc.Att.names<-c("Management strategy","Areal overlap","Geographic concentration","Vertical overlap","Spawning stock biomass", "Fishing rate relative to M",
+                      "Seasonal migrations","Behavioral responses","Morphology affecting capture","Post release survival", "Value of fishery", "Fishery impact to habitat")
+    
+    for(i in 1:12){
+      text(x=-1.2,y=(24-(11+i)),labels=paste0(Susc.Att.names[i]),pos=4)
+      text(x=3.7,y=(24-(11+i)),labels=paste0(round(susc.uncert.temp[i],2)),pos=4)
+      text(x=4.5,y=(24-(11+i)),labels=paste0(round(as.numeric(inputData.temp[(i+10),4]),2)),pos=4)
+      if(as.numeric(inputData.temp[(i+10),4])==0){
+        
+      }else if(susc.uncert.temp[i]<=0.25){
+        lines(x=c((quantsSusc.temp[2,(i)]),(quantsSusc.temp[6,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="red")
+        lines(x=c((quantsSusc.temp[3,(i)]),(quantsSusc.temp[5,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="red")
+        points(x=c((meansusc.temp[i]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i))),pch=16,cex=3,col="red")
+      }else if(susc.uncert.temp[i]<=0.5){
+        lines(x=c((quantsSusc.temp[2,(i)]),(quantsSusc.temp[6,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="orange")
+        lines(x=c((quantsSusc.temp[3,(i)]),(quantsSusc.temp[5,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="orange")
+        points(x=c((meansusc.temp[i]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i))),pch=16,cex=3,col="orange")
+      }else if(susc.uncert.temp[i]<=0.75){
+        lines(x=c((quantsSusc.temp[2,(i)]),(quantsSusc.temp[6,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="yellow")
+        lines(x=c((quantsSusc.temp[3,(i)]),(quantsSusc.temp[5,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="yellow")
+        points(x=c((meansusc.temp[i]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i))),pch=16,cex=3,col="yellow")
+      }else{
+        lines(x=c((quantsSusc.temp[2,(i)]),(quantsSusc.temp[6,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=6,col="green")
+        lines(x=c((quantsSusc.temp[3,(i)]),(quantsSusc.temp[5,(i)]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i)),(24-(11+i))),lty=1,lwd=12,col="green")
+        points(x=c((meansusc.temp[i]))/as.numeric(inputData.temp[(i+10),4]),y=c((24-(11+i))),pch=16,cex=3,col="green")
+      }
+      
+      lines(x=c(-1.2,5),y=c((24-(11+i)-0.5),(24-(11+i)-0.5)),lty=1,lwd=3,col="black")
+    }
+    
+    text(x=2,y=24,cex=2,labels="Attribute Score Range, Quality, and Weight",pos=3)
+    mtext(text=c("Score","Quality","Weight"),cex=1.5,side=1,at=c(2,3.85,4.6),line=1)
+    #mtext(text=c("*Quality is a value between 0 (equal probability of all 3 scores) and 1 (100% probability of a single score)"),cex=1,side=1,at=c(2),line=2)
+    mtext(text=c("*Quality is a value between 0 and 1 equal to the probability "),cex=1,side=1,at=c(2),line=2)
+    mtext(text=c("of the most likely score minus the probability of the least likely score."),cex=1,side=1,at=c(2),line=3)
+    
+    lines(x=c(0.6,0.6),y=c(0.5,12.5),lty=1,lwd=3)
+    lines(x=c(0.6,0.6),y=c(13.5,23.5),lty=1,lwd=3)
+    lines(x=c(3.4,3.4),y=c(0.5,12.5),lty=1,lwd=3)
+    lines(x=c(3.4,3.4),y=c(13.5,23.5),lty=1,lwd=3)
+    lines(x=c(4.2,4.2),y=c(0.5,12.5),lty=1,lwd=3)
+    lines(x=c(4.2,4.2),y=c(13.5,23.5),lty=1,lwd=3)
+    polygon(x=c(-1.2,-1.2,5,5),y=c(0.5,12.5,12.5,0.5),lty=1,lwd=3)
+    polygon(x=c(-1.2,-1.2,5,5),y=c(13.5,23.5,23.5,13.5),lty=1,lwd=3)
+    axis(side=1,at=c(1,2,3),pos=0.5)
+    
+    dev.off()
+    Quants.Matrix.temp[j,] <- c(ProdQuants.temp,SuscQuants.temp)
+    if(((ProdQuants.temp[5]-ProdQuants.temp[1])==0) | ((SuscQuants.temp[5]-SuscQuants.temp[1])==0)){
+      bord.temp[j] <-"black"
+    }else{
+      bord.temp[j] <-NA
+    }
+  }
+  
+  
+  write.csv(AttMatrix,file=save.csv.name,row.names = FALSE)
+  write.csv(PSVMatrix,file=save.PSV.name,row.names = FALSE)
+  
+  png(file=save.PvS.name, width = 700, height = 700, units = "px")
+  plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
+  polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
+  
+  newVal<-0
+  for(i in 1:11)
+  {
+    newVal<-newVal+0.25
+    lines(x=ifelse(seq(3.1,(3.1-newVal-0.1),-0.01)>=0.9,seq(3.1,(3.1-newVal-0.1),-0.01),0.9),y=ifelse((sqrt(newVal^2-seq(-0.1,newVal,0.01)^2)+1)<=3.1,(sqrt(newVal^2-seq(-0.1,newVal,0.01)^2)+1),3.1),lty=3,lwd=1,col="black")
+    lines(x=ifelse(seq(3.1,(3.1-newVal-0.1),-0.01)>=0.9,seq(3.1,(3.1-newVal-0.1),-0.01),0.9),y=(-(ifelse((sqrt(newVal^2-seq(-0.1,newVal,0.01)^2)+1)<=3.1,(sqrt(newVal^2-seq(-0.1,newVal,0.01)^2)+1),3.1))+2),lty=3,lwd=1,col="black")
+  }
+  polygon(x=c(3.08,3.08,0.92,0.92),y=c(0.92,3.08,3.08,0.92),lwd=4)
+  
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,5]-Quants.Matrix.temp[,3],b=Quants.Matrix.temp[,10]-Quants.Matrix.temp[,8],deg=T,segment=c(0,90),arc.only=FALSE,lty=2,lwd=2,border=bord.temp,col=gray(0.4,0.2))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,3]-Quants.Matrix.temp[,1],b=Quants.Matrix.temp[,10]-Quants.Matrix.temp[,8],deg=T,segment=c(90,180),arc.only=FALSE,lty=2,lwd=2,border=bord.temp,col=gray(0.4,0.2))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,3]-Quants.Matrix.temp[,1],b=Quants.Matrix.temp[,8]-Quants.Matrix.temp[,6],deg=T,segment=c(180,270),arc.only=FALSE,lty=2,lwd=2,border=bord.temp,col=gray(0.4,0.2))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,5]-Quants.Matrix.temp[,3],b=Quants.Matrix.temp[,8]-Quants.Matrix.temp[,6],deg=T,segment=c(270,360),arc.only=FALSE,lty=2,lwd=2,border=bord.temp,col=gray(0.4,0.2))
+  
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,4]-Quants.Matrix.temp[,3],b=Quants.Matrix.temp[,9]-Quants.Matrix.temp[,8],deg=T,segment=c(0,90),arc.only=FALSE,lty=1,lwd=4,border=bord.temp,col=gray(0.1,0.5))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,3]-Quants.Matrix.temp[,2],b=Quants.Matrix.temp[,9]-Quants.Matrix.temp[,8],deg=T,segment=c(90,180),arc.only=FALSE,lty=1,lwd=4,border=bord.temp,col=gray(0.1,0.5))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,3]-Quants.Matrix.temp[,2],b=Quants.Matrix.temp[,8]-Quants.Matrix.temp[,7],deg=T,segment=c(180,270),arc.only=FALSE,lty=1,lwd=4,border=bord.temp,col=gray(0.1,0.5))
+  draw.ellipse(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],a=Quants.Matrix.temp[,4]-Quants.Matrix.temp[,3],b=Quants.Matrix.temp[,8]-Quants.Matrix.temp[,7],deg=T,segment=c(270,360),arc.only=FALSE,lty=1,lwd=4,border=bord.temp,col=gray(0.1,0.5))
+  
+  points(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],pch=16,cex=2,col="black")
+  text(x=Quants.Matrix.temp[,3],y=Quants.Matrix.temp[,8],labels=names(split3),pos=4,col="white")
+  
+  dev.off()
+}
+
 server <- function(input, output, session) {
   
   Quants.Matrix<-matrix(NA,nrow=500,ncol=10)
@@ -746,7 +1008,30 @@ server <- function(input, output, session) {
       
       write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
       
-      zip::zip(file,files)
+      zip::zipr(file,files)
+      unlink(files)
+      setwd(true.wd)
+      
+    },
+    contentType =  "application/zip"
+  )
+  
+  output$downloadAllAssessment<-downloadHandler(
+    filename = paste0("All_PSA_Results.zip"),
+    content =function(file){
+      true.wd<-getwd()
+      save.csv.name<-paste0("All_AttVals.csv")
+      save.PSV.name<-paste0("All_PSVVals.csv")
+      save.PvS.name<-paste0("All_PvS.png")
+      save.Vuln.name<-paste0(names(split3),"_Vuln.png")
+      save.AttSD.name<-paste0(names(split3),"_AttSD.png")
+      setwd(paste0(true.wd,"/Downloads"))
+      files<-c(save.csv.name,save.PSV.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+      unlink(files)
+      setwd(true.wd)
+      write.all.files(input,output,session,split3)
+      setwd(paste0(true.wd,"/Downloads"))
+      zip::zipr(file,files)
       unlink(files)
       setwd(true.wd)
       
@@ -772,7 +1057,7 @@ server <- function(input, output, session) {
         
         write.files(input,output,session,PSMatrix,bord,Quants.Matrix,split3)
         
-        zip::zip(file,files)
+        zip::zipr(file,files)
         unlink(files)
         setwd(true.wd)
         
@@ -871,6 +1156,29 @@ server <- function(input, output, session) {
         updateNumericInput(session,paste0("ProbSA",i,5),value=inputData[(i+10),5])
       }
     }
+    
+    output$downloadAllAssessment<-downloadHandler(
+      filename = paste0("All_PSA_Results.zip"),
+      content =function(file){
+        true.wd<-getwd()
+        save.csv.name<-paste0("All_AttVals.csv")
+        save.PSV.name<-paste0("All_PSVVals.csv")
+        save.PvS.name<-paste0("All_PvS.png")
+        save.Vuln.name<-paste0(names(split3),"_Vuln.png")
+        save.AttSD.name<-paste0(names(split3),"_AttSD.png")
+        setwd(paste0(true.wd,"/Downloads"))
+        files<-c(save.csv.name,save.PSV.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+        unlink(files)
+        setwd(true.wd)
+        write.all.files(input,output,session,split3)
+        setwd(paste0(true.wd,"/Downloads"))
+        zip::zipr(file,files)
+        unlink(files)
+        setwd(true.wd)
+        
+      },
+      contentType =  "application/zip"
+    )
   })
   
   observeEvent(input$saveAssessment,{
@@ -899,6 +1207,29 @@ server <- function(input, output, session) {
     split3[[1]]<-NULL
     split3<<-split3
     updateSelectInput(session,"xyChoice",choices=split3)
+    
+    output$downloadAllAssessment<-downloadHandler(
+      filename = paste0("All_PSA_Results.zip"),
+      content =function(file){
+        true.wd<-getwd()
+        save.csv.name<-paste0("All_AttVals.csv")
+        save.PSV.name<-paste0("All_PSVVals.csv")
+        save.PvS.name<-paste0("All_PvS.png")
+        save.Vuln.name<-paste0(names(split3),"_Vuln.png")
+        save.AttSD.name<-paste0(names(split3),"_AttSD.png")
+        setwd(paste0(true.wd,"/Downloads"))
+        files<-c(save.csv.name,save.PSV.name,save.PvS.name,save.Vuln.name,save.AttSD.name)
+        unlink(files)
+        setwd(true.wd)
+        write.all.files(input,output,session,split3)
+        setwd(paste0(true.wd,"/Downloads"))
+        zip::zipr(file,files)
+        unlink(files)
+        setwd(true.wd)
+        
+      },
+      contentType =  "application/zip"
+    )
   })
   
  
