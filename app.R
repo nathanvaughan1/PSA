@@ -789,7 +789,7 @@ write.all.files<-function(input,output,session,split3){
     meansusc.temp<-apply(suscMatrix.temp,2,sum)/10000
     varsusc.temp<-apply(suscMatrix.temp,2,var)
     stdevsusc.temp<-sqrt(varsusc.temp)
-    PSVMatrix[(3*(j-1)+2),]<-c(names(split3)[j],"Susceptability",meansusc.temp[11],stdevsusc.temp[11],SuscQuants.temp,NA,NA,NA)
+    PSVMatrix[(3*(j-1)+2),]<-c(names(split3)[j],"Susceptability",meansusc.temp[13],stdevsusc.temp[13],SuscQuants.temp,NA,NA,NA)
     
     vuln.temp<-sqrt((((3-prodMatrix.temp[,11])*(3-prodMatrix.temp[,11]))+((suscMatrix.temp[,13]-1)*(suscMatrix.temp[,13]-1))))
     
