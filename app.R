@@ -12,7 +12,7 @@ ui <- fluidPage(
                      (2009) by providing the ability to assign a probability to the score for each 
                      attribute. These score probabilities are combined to define a vulnerability 
                      likelihood function. This alternate methodology and shiny application were 
-                     developed by Dr Nathan Vaughan of NOAA's Southeast Fisheries Science Center in 
+                     developed by Dr Nathan Vaughan of Vaughan Analytics supporting NOAA's Southeast Fisheries Science Center in 
                      collaboration with Dr Jason Cope of NOAA's Northwest Fisheries Science Center. 
                      Please contact nathan.vaughan@noaa.gov with any questions.")
                   ),
@@ -480,7 +480,9 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
     ProdY<-ProdDens$y[ProdDens$x>=min(prodMatrix[,11]) & ProdDens$x<=max(prodMatrix[,11])]
     ProdX<-ProdDens$x[ProdDens$x>=min(prodMatrix[,11]) & ProdDens$x<=max(prodMatrix[,11])]
     ProdDensCum<-cumsum(ProdY/sum(ProdY))
-    ProdQuants<-ProdX[c(length(ProdDensCum[ProdDensCum<=0.025]),length(ProdDensCum[ProdDensCum<=0.25]),length(ProdDensCum[ProdDensCum<=0.5]),length(ProdDensCum[ProdDensCum<=0.75]),length(ProdDensCum[ProdDensCum<=0.975]))]
+    ProdVec<-c(length(ProdDensCum[ProdDensCum<=0.025]),length(ProdDensCum[ProdDensCum<=0.25]),length(ProdDensCum[ProdDensCum<=0.5]),length(ProdDensCum[ProdDensCum<=0.75]),length(ProdDensCum[ProdDensCum<=0.975]))
+    ProdVec[ProdVec==0]<-1
+    ProdQuants<-ProdX[ProdVec]
   }
   meanprod<-apply(prodMatrix,2,sum)/10000
   varprod<-apply(prodMatrix,2,var)
@@ -508,7 +510,9 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
     SuscY<-SuscDens$y[SuscDens$x>=min(suscMatrix[,13]) & SuscDens$x<=max(suscMatrix[,13])]
     SuscX<-SuscDens$x[SuscDens$x>=min(suscMatrix[,13]) & SuscDens$x<=max(suscMatrix[,13])]
     SuscDensCum<-cumsum(SuscY/sum(SuscY))
-    SuscQuants<-SuscX[c(length(SuscDensCum[SuscDensCum<=0.025]),length(SuscDensCum[SuscDensCum<=0.25]),length(SuscDensCum[SuscDensCum<=0.5]),length(SuscDensCum[SuscDensCum<=0.75]),length(SuscDensCum[SuscDensCum<=0.975]))]
+    SuscVec<-c(length(SuscDensCum[SuscDensCum<=0.025]),length(SuscDensCum[SuscDensCum<=0.25]),length(SuscDensCum[SuscDensCum<=0.5]),length(SuscDensCum[SuscDensCum<=0.75]),length(SuscDensCum[SuscDensCum<=0.975]))
+    SuscVec[SuscVec==0]<-1
+    SuscQuants<-SuscX[SuscVec]
   }
   meansusc<-apply(suscMatrix,2,sum)/10000
   varsusc<-apply(suscMatrix,2,var)
@@ -521,10 +525,10 @@ write.files<-function(input,output,session,PSMatrix,bord,Quants.Matrix,split3){
   plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
   polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
-  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
-  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
   
   newVal<-0
@@ -756,7 +760,9 @@ write.all.files<-function(input,output,session,split3){
       ProdY.temp<-ProdDens.temp$y[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
       ProdX.temp<-ProdDens.temp$x[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
       ProdDensCum.temp<-cumsum(ProdY.temp/sum(ProdY.temp))
-      ProdQuants.temp<-ProdX.temp[c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))]
+      ProdXVec.temp<-c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))
+      ProdXVec.temp[ProdXVec.temp==0]<-1
+      ProdQuants.temp<-ProdX.temp[ProdXVec.temp]
     }
     meanprod.temp<-apply(prodMatrix.temp,2,sum)/10000
     varprod.temp<-apply(prodMatrix.temp,2,var)
@@ -784,7 +790,9 @@ write.all.files<-function(input,output,session,split3){
       SuscY.temp<-SuscDens.temp$y[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
       SuscX.temp<-SuscDens.temp$x[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
       SuscDensCum.temp<-cumsum(SuscY.temp/sum(SuscY.temp))
-      SuscQuants.temp<-SuscX.temp[c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))]
+      SuscXVec.temp<-c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))
+      SuscXVec.temp[SuscXVec.temp==0]<-1
+      SuscQuants.temp<-SuscX.temp[SuscXVec.temp]
     }
     meansusc.temp<-apply(suscMatrix.temp,2,sum)/10000
     varsusc.temp<-apply(suscMatrix.temp,2,var)
@@ -820,7 +828,6 @@ write.all.files<-function(input,output,session,split3){
     
     dev.off()  
     
-    
     png(file=save.AttSD.name.temp, width = 700, height = 700, units = "px")
     
     vulnCummDen.temp<-cumsum(dens$y)
@@ -832,14 +839,11 @@ write.all.files<-function(input,output,session,split3){
     
     PSVMatrix[(3*(j-1)+3),]<-c(names(split3)[j],"Vulnerability",meanvuln.temp,stdevvuln.temp,vulnQuants.temp,round(sum(dens$y[dens$x<=input$LowVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>input$LowVuln & dens$x<input$HighVuln])/sum(dens$y),2),round(sum(dens$y[dens$x>=input$HighVuln])/sum(dens$y),2))
     
-    
-    
     plot(NA,xlim=c(-1.1,5),ylim=c(0.5,24.5),xlab="",ylab="",axes=FALSE)
     
     Prod.Att.names<-c("r(intrinsic increase)","Maximum age","Maximum size","VonBert (K)","Natural mortality","Measured fecundity","Breeding strategy",
                       "Recruitment","Age at maturity","Mean trophic level")
     
-    #scale_prod<-vector(length=10)
     for(i in 1:10){
       text(x=-1.2,y=(24-i),labels=paste0(Prod.Att.names[i]),pos=4)
       text(x=3.7,y=(24-i),labels=paste0(round(prod.uncert.temp[i],2)),pos=4)
@@ -929,10 +933,10 @@ write.all.files<-function(input,output,session,split3){
   plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
   polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
-  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
-  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
+  polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
   polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
   
   newVal<-0
@@ -1260,7 +1264,9 @@ server <- function(input, output, session) {
       ProdY<-ProdDens$y[ProdDens$x>=min(prodMatrix[,11]) & ProdDens$x<=max(prodMatrix[,11])]
       ProdX<-ProdDens$x[ProdDens$x>=min(prodMatrix[,11]) & ProdDens$x<=max(prodMatrix[,11])]
       ProdDensCum<-cumsum(ProdY/sum(ProdY))
-      ProdQuants<-ProdX[c(length(ProdDensCum[ProdDensCum<=0.025]),length(ProdDensCum[ProdDensCum<=0.25]),length(ProdDensCum[ProdDensCum<=0.5]),length(ProdDensCum[ProdDensCum<=0.75]),length(ProdDensCum[ProdDensCum<=0.975]))]
+      ProdVec<-c(length(ProdDensCum[ProdDensCum<=0.025]),length(ProdDensCum[ProdDensCum<=0.25]),length(ProdDensCum[ProdDensCum<=0.5]),length(ProdDensCum[ProdDensCum<=0.75]),length(ProdDensCum[ProdDensCum<=0.975]))
+      ProdVec[ProdVec==0]<-1
+      ProdQuants<-ProdX[ProdVec]
     }
     meanprod<-apply(prodMatrix,2,sum)/10000
     varprod<-apply(prodMatrix,2,var)
@@ -1287,7 +1293,9 @@ server <- function(input, output, session) {
       SuscY<-SuscDens$y[SuscDens$x>=min(suscMatrix[,13]) & SuscDens$x<=max(suscMatrix[,13])]
       SuscX<-SuscDens$x[SuscDens$x>=min(suscMatrix[,13]) & SuscDens$x<=max(suscMatrix[,13])]
       SuscDensCum<-cumsum(SuscY/sum(SuscY))
-      SuscQuants<-SuscX[c(length(SuscDensCum[SuscDensCum<=0.025]),length(SuscDensCum[SuscDensCum<=0.25]),length(SuscDensCum[SuscDensCum<=0.5]),length(SuscDensCum[SuscDensCum<=0.75]),length(SuscDensCum[SuscDensCum<=0.975]))]
+      SuscVec<-c(length(SuscDensCum[SuscDensCum<=0.025]),length(SuscDensCum[SuscDensCum<=0.25]),length(SuscDensCum[SuscDensCum<=0.5]),length(SuscDensCum[SuscDensCum<=0.75]),length(SuscDensCum[SuscDensCum<=0.975]))
+      SuscVec[SuscVec==0]<-1
+      SuscQuants<-SuscX[SuscVec]
     }
     meansusc<-apply(suscMatrix,2,sum)/10000
     varsusc<-apply(suscMatrix,2,var)
@@ -1296,14 +1304,15 @@ server <- function(input, output, session) {
     vuln<-sqrt((((3-prodMatrix[,11])*(3-prodMatrix[,11]))+((suscMatrix[,13]-1)*(suscMatrix[,13]-1))))
     
     if(input$plotType==1){
+      
       showElement("xyChoice")
       plot(NA,xlab="Productivity",ylab="Susceptibility",xlim=c(3,1),ylim=c(1,3))
       polygon(x=c(3.1,3.1,0.9,0.9),y=c(0.9,3.1,3.1,0.9),col="red")
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1),1),col="orange",border=NA)
-      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
+      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1),1),col="yellow",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1),1),col="green",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$HighVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$HighVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1),3.1))+2),1),col="orange",border=NA)
-      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$HighVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
+      polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1)<3.1,(sqrt((input$ModVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$ModVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$ModVuln)^2))+1),3.1))+2),1),col="yellow",border=NA)
       polygon(x=c(3.1,seq(3.1,0.9,-0.01),0.9),y=c(1,(-(ifelse((sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1)<3.1,(sqrt((input$LowVuln)^2-ifelse((seq(-0.1,2.1,0.01)^2)<=(input$LowVuln)^2,(seq(-0.1,2.1,0.01)^2),(input$LowVuln)^2))+1),3.1))+2),1),col="green",border=NA)
       
       newVal<-0
@@ -1360,7 +1369,9 @@ server <- function(input, output, session) {
             ProdY.temp<-ProdDens.temp$y[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
             ProdX.temp<-ProdDens.temp$x[ProdDens.temp$x>=min(prodMatrix.temp[,11]) & ProdDens.temp$x<=max(prodMatrix.temp[,11])]
             ProdDensCum.temp<-cumsum(ProdY.temp/sum(ProdY.temp))
-            ProdQuants.temp<-ProdX.temp[c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))]
+            ProdQVec.temp<-c(length(ProdDensCum.temp[ProdDensCum.temp<=0.025]),length(ProdDensCum.temp[ProdDensCum.temp<=0.25]),length(ProdDensCum.temp[ProdDensCum.temp<=0.5]),length(ProdDensCum.temp[ProdDensCum.temp<=0.75]),length(ProdDensCum.temp[ProdDensCum.temp<=0.975]))
+            ProdQVec.temp[ProdQVec.temp==0]<-1
+            ProdQuants.temp<-ProdX.temp[ProdQVec.temp]
           }
           
           sumSuscWeights.temp<-0
@@ -1378,7 +1389,9 @@ server <- function(input, output, session) {
             SuscY.temp<-SuscDens.temp$y[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
             SuscX.temp<-SuscDens.temp$x[SuscDens.temp$x>=min(suscMatrix.temp[,13]) & SuscDens.temp$x<=max(suscMatrix.temp[,13])]
             SuscDensCum.temp<-cumsum(SuscY.temp/sum(SuscY.temp))
-            SuscQuants.temp<-SuscX.temp[c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))]
+            SuscQVec.temp<-c(length(SuscDensCum.temp[SuscDensCum.temp<=0.025]),length(SuscDensCum.temp[SuscDensCum.temp<=0.25]),length(SuscDensCum.temp[SuscDensCum.temp<=0.5]),length(SuscDensCum.temp[SuscDensCum.temp<=0.75]),length(SuscDensCum.temp[SuscDensCum.temp<=0.975]))
+            SuscQVec.temp[SuscQVec.temp==0]<-1
+            SuscQuants.temp<-SuscX.temp[SuscQVec.temp]
           }
           
           Quants.Matrix[which(split3==input$xyChoice[j]),1:5]<<-ProdQuants.temp

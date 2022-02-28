@@ -1,0 +1,13 @@
+name: productivity-susceptibility_analysis
+title: Productivity-Susceptibility Analysis
+username: nathan.vaughan
+account: nathan.vaughan
+server: connect.fisheries.noaa.gov
+hostUrl: https://connect.fisheries.noaa.gov/__api__
+appId: 88
+bundleId: 337
+url: https://connect.fisheries.noaa.gov/content/e763573f-15cb-44db-9ab2-4e4e1fd89f34/
+when: 1646075486.19816
+lastSyncTime: 1646075486.19816
+asMultiple: FALSE
+asStatic: FALSE
