@@ -726,7 +726,7 @@ write.all.files<-function(input,output,session,split3){
     save.AttSD.name.temp <- paste0(getwd(),"/Downloads/",names(split3)[j],"_AttSD.png")
     
     inputData.temp <- read.csv(file=paste0(getwd(),"/Assessments/",split3[[j]]),header=TRUE,row.names = 1)
-    inputData.temp <- as.matrix(inputData.temp[,-5])
+    inputData.temp <- as.matrix(inputData.temp[,1:4])
     AttMatrix[(22*(j-1)+1:22),1] <- rep(names(split3)[j],22)
     AttMatrix[(22*(j-1)+1:22),2] <- c(paste0("Productivity attribute ",1:10),paste0("Susceptibility attribute ",1:12))
     AttMatrix[(22*(j-1)+1:22),3:6] <- inputData.temp
@@ -966,8 +966,8 @@ write.all.files<-function(input,output,session,split3){
 
 server <- function(input, output, session) {
   
-  Quants.Matrix<-matrix(NA,nrow=500,ncol=10)
-  bord<-vector(length=500)
+  Quants.Matrix<-matrix(NA,nrow=5000,ncol=10)
+  bord<-vector(length=5000)
   
   curr<-getwd()
   #Read all the directories in Assessments folder
